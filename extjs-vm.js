@@ -106,7 +106,15 @@ context.Ext.Loader.loadScriptFile = function (url, onLoad, onError, scope, synch
 	var code = fs.readFileSync(url);
 
 	// better way may be this --
-	vm.runInContext(code, context, url);
+	try
+	{
+		vm.runInContext(code, context, url);
+	}
+	catch (e)
+	{
+		console.log(e.stack);
+		throw e;
+	}
 
 	onLoad.call(scope);
 };

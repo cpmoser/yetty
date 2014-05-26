@@ -56,18 +56,22 @@
 		{
 			ns:       "observ",
 			location: "https://world.observjs.com"
-		});
+		}, db);
 
 		this.instance.startup(Ext);
 
 		// create a test object for this sandbox
-		var test = Ext.create("observ.data.Test", {foo: "bar"});
+		var test = this.instance.create(this, "observ.data.Test", {foo: "bar"});
 
-		this.instance.add(test);
+		test.alter();
 
-		this.instance.add(Ext.create("observ.data.Test", {foo: "bar"}));
+//		this.instance.add(test);
+
+//		this.instance.add(Ext.create("observ.data.Test", {foo: "bar"}));
 
 		this.fireEvent("ready", this);
+
+//		this.instance.get(2);
 	},
 
 	listen: function (port, httpPort)
@@ -88,13 +92,6 @@
 		var httpServer = http.createServer(ec);
 
 		httpServer.listen(httpPort);
-
-		/*var sock = shoe(function (stream)
-		{
-			console.log("received stream");
-			d.pipe(stream).pipe(d);
-		});
-		*/
 
 		var sock = shoe(function (stream)
 		{

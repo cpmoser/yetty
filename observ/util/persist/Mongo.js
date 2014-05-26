@@ -41,8 +41,21 @@ Ext.define("observ.util.persist.Mongo",
 
 	constructor: function ()
 	{
-		var self = this.mixins.persist.self;
+		var
+			self   = this.mixins.persist.self,
+			conn   = self.conn(),
+			c      = conn.collection("objects"),
+			commit = Ext.bind(this.commit, this);
 
-		console.log(self.conn());
+		this.commit = function (silent, modifiedFieldNames)
+		{
+			c.update({_id: this.getId()}, {"$set": {data: this.getData()}}, {safe: true, multi: false, upsert: false}, function (err, db)
+			{
+				if (!err)
+				{
+					commit(silent, modifiedFieldNames);
+				}
+			});
+		};
 	}
 });

@@ -127,12 +127,11 @@ Ext.define("observ.util.Subscriber",
 		{
 			if (connection.id !== remoteId)
 			{
-				console.log("broadcasting to " + remoteId);
 				remote.remoter.receive(method, args);
 			}
 			else
 			{
-				console.log("send ack");
+			//	console.log("send ack");
 			}
 		}, this);
 
@@ -143,7 +142,6 @@ Ext.define("observ.util.Subscriber",
 	{
 		if (source === this)
 		{
-			console.log("source is this?");
 			return true;
 		}
 

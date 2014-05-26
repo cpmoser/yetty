@@ -16,16 +16,18 @@ Ext.define("observ.data.Test",
 
 	alter: function ()
 	{
-		console.log("calling alter");
+		var foo = Math.random().toString(36).replace(/[^a-z]+/g, '');
 
 		try
 		{
-			this.set("foo", Math.random().toString(36).replace(/[^a-z]+/g, ''));
+			this.set("foo", foo);
 		}
 		catch (e)
 		{
 			console.log(e.message);
 		}
+
+		this.commit();
 
 		setTimeout(Ext.bind(this.alter, this), 3000);
 	}

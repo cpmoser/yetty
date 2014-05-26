@@ -13,7 +13,8 @@ var
 
 client.connect();
 
-client.get(2, function (o)
+client.create("observ.data.Test", {foo: "bar"}, function (o)
 {
-	o.alter();
+	console.log("new object created!");
+	console.log(o);
 });

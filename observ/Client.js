@@ -19,6 +19,9 @@ Ext.define("observ.Client",
 
 		// this.connect();
 
+		Ext.ClassManager.setAlias("observ.util.persist.Persist", "observ.util.Persist");
+		Ext.require("observ.util.persist.Persist");
+
 		this.addEvents("connect");
 	},
 
@@ -96,7 +99,6 @@ Ext.define("observ.Client",
 
 	onGet: function (id, className, config, theirRemoter, myRemoter, cb, scope)
 	{
-		console.log("onGet executed");
 		var o = Ext.create(className, config);
 
 		// object.addSubscriber(objectRemoter)
@@ -109,7 +111,7 @@ Ext.define("observ.Client",
 		}
 	},
 
-	create: function (className, params, cb, scope)
+	create: function (className, data, cb, scope)
 	{
 		if (!this.remoteSb)
 		{
@@ -117,13 +119,13 @@ Ext.define("observ.Client",
 			return;
 		}
 
-		var em = this.createEmitter();
+		var myRemoter = Ext.create("observ.util.Remoter");
 
 		this.remoteSb.create(
 			className,
-			params,
-			em.emit.bind(em),
-			Ext.bind(this.onGet, this, [em, cb, scope], true)
+			data,
+			myRemoter,
+			Ext.bind(this.onGet, this, [myRemoter, cb, scope], true)
 		);
 	}
 });

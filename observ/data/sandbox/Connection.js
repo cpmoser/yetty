@@ -13,10 +13,8 @@ Ext.define("observ.data.sandbox.Connection",
 		this.stream = stream;
 		this.id = Ext.id();
 
-		console.log(this.id);
-
 		this.get        = Ext.bind(sb.get, sb, [this], 0);
-	//	this.create     = Ext.bind(sb.create, sb, [connection], 0);
+		this.create     = Ext.bind(sb.create, sb, [this], 0);
 		this.data       = sb.data;
 		this.$className = sb.$className;
 		this.addRemote  = Ext.bind(sb.addRemote, sb, [this], 0);

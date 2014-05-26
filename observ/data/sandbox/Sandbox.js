@@ -7,11 +7,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 {
 	var objects = {}, counter = 1;
 
-	var load = function (objectId)
-	{
-
-	};
-
 	return {
 
 		extend: "observ.data.Model",
@@ -52,7 +47,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 		},
 
-		constructor: function (data, vm)
+		constructor: function (data, persistence)
 		{
 			this.callParent(arguments);
 
@@ -63,12 +58,19 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 				// create a new vm and set the loader path
 			}
 
-			this.vm = vm;
+			this.persistence = persistence;
 		},
 
 		get: function (connection, id, theirRemoter, clientCb)
 		{
 			var o = objects[id];
+
+			if (!o || true)
+			{
+				var collection = this.persistence.conn().collection("objects");
+			}
+
+			clientCb = clientCb || Ext.emptyFn;
 
 			try
 			{
@@ -87,9 +89,46 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			}
 		},
 
-		create: function ()
+		create: function (connection, className, data, theirRemoter, clientCb)
 		{
+			var
+				o = Ext.create(className, data),
+				c = this.persistence.conn().collection("objects"),
 
+				d =
+				{
+					className: o.$className,
+					data:      o.getData()
+				};
+
+			clientCb = clientCb || Ext.emptyFn;
+
+			c.insert(d, {}, function (err, records)
+			{
+				try
+				{
+					if (err)
+					{
+						throw new Error("database error");
+					}
+
+					o.setId(records[0]._id);
+					o.commit();
+
+					clientCb(
+						o.id,
+						o.$className,
+						o.data,
+						theirRemoter ? o.addRemote(connection, theirRemoter) : undefined
+					);
+				}
+				catch (e)
+				{
+					clientCb(false, null, null, null);
+				}
+			});
+
+			return o;
 		}
 	};
 });

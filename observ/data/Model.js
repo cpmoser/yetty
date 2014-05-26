@@ -28,7 +28,10 @@ Ext.define("observ.data.Model",
 	{
 		this.callParent(arguments);
 
-		this.mixins.persist.constructor.call(this, arguments);
+		if (this.mixins.persist)
+		{
+			this.mixins.persist.constructor.call(this, arguments);
+		}
 	},
 
 	someFn: function ()
