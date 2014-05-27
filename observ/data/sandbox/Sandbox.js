@@ -65,9 +65,20 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 		{
 			var o = objects[id];
 
-			if (!o || true)
+			clientCb = clientCb || Ext.emptyFn;
+
+			if (!o)
 			{
 				var collection = this.persistence.conn().collection("objects");
+
+				var cursor = collection.find({_id: id});
+
+				cursor.nextObject(function (err, doc)
+				{
+					objects[id] = Ext.create(doc.className, doc.data, doc._id);
+
+
+				});
 			}
 
 			clientCb = clientCb || Ext.emptyFn;
