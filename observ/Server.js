@@ -82,6 +82,11 @@
 			i     = this.instance,
 			c     = Ext.bind(Ext.create, Ext, ["observ.data.sandbox.Connection", i], 0);
 
+		/*c =
+		{
+			get: Ext.bind(this.get, this)
+		};*/
+
 		var d = dnode(c), server = d.listen(port);
 
 		var
@@ -104,5 +109,11 @@
 		sock.install(httpServer, "/observ-connect");
 
 		return this;
+	},
+
+	get: function ()
+	{
+		console.log(this);
+		console.log(arguments);
 	}
  });

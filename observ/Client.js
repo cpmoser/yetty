@@ -49,8 +49,16 @@ Ext.define("observ.Client",
 		this.onConnect(remote, stream);
 	},
 
+	onConnect2: function (remote, stream)
+	{
+		remote.get("test");
+	},
+
 	onConnect: function (remote, stream)
 	{
+		console.log("remote");
+		console.log(remote);
+
 		stream.on("fail", function ()
 		{
 			console.log("connection failed", arguments);
@@ -100,6 +108,8 @@ Ext.define("observ.Client",
 	onGet: function (id, className, config, theirRemoter, myRemoter, cb, scope)
 	{
 		var o = Ext.create(className, config);
+
+		console.log(this.connection);
 
 		// object.addSubscriber(objectRemoter)
 		o.setRemoter(myRemoter);

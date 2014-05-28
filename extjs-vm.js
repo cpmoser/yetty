@@ -91,6 +91,8 @@ var
 	extJsFile = "ext-all-debug.js", // use ext.js to use dynamic loader
 	code      = fs.readFileSync(extJsPath + extJsFile);
 
+extJsFile = "ext.js";
+
 vm.runInContext(code, context, extJsFile);
 
 var

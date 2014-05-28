@@ -71,33 +71,47 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			{
 				var collection = this.persistence.conn().collection("objects");
 
-				var cursor = collection.find({_id: id});
-
-				cursor.nextObject(function (err, doc)
+				try
 				{
-					objects[id] = Ext.create(doc.className, doc.data, doc._id);
+					var g = collection.findOne({_id: this.persistence.id(id)}, function (err, doc)
+					{
+						console.log("found object");
+						console.log(doc);
 
+						objects[id] = Ext.create(doc.className, doc.data, doc._id);
 
-				});
+						var o = objects[id];
+
+						clientCb(
+							id,
+							o.$className,
+							o.getData(),
+							theirRemoter ? o.addRemote(connection, theirRemoter) : undefined
+						);
+					});
+				}
+				catch (e)
+				{
+					console.log("error!");
+					console.log(e);
+				}
+
+				console.log(g);
+
+				return;
 			}
 
-			clientCb = clientCb || Ext.emptyFn;
+			clientCb(
+				id,
+				o.$className,
+				o.getData(),
+				theirRemoter ? o.addRemote(connection, theirRemoter) : undefined
+			);
+		},
 
-			try
-			{
-				var myRemoter = o.addRemote(connection, theirRemoter);
-
-				clientCb(
-					id,
-					o.$className,
-					o.data,
-					myRemoter // addRemote returns remoters receive method
-				);
-			}
-			catch (e)
-			{
-				clientCb(false, null, null, null);
-			}
+		onGet: function (cb, object)
+		{
+			cb();
 		},
 
 		create: function (connection, className, data, theirRemoter, clientCb)

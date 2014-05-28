@@ -172,10 +172,12 @@ Ext.define("observ.util.Subscriber",
 			remoter: remoter
 		};
 
-		var ended = Ext.bind(this.onRemoteEnded, this, [connection.connection], false);
+		connection.on("end", this.dropRemote, this);
 
-		connection.stream.on("end", ended);
-		connection.stream.on("error", ended);
+	//	var ended = Ext.bind(this.onRemoteEnded, this, [connection.connection], false);
+
+	//	connection.stream.on("end", ended);
+	//	connection.stream.on("error", ended);
 
 		var myRemoter =
 		{
@@ -190,13 +192,14 @@ Ext.define("observ.util.Subscriber",
 	 *
 	 * @param {String} id Client connection ID
 	 */
-	dropRemote: function (id)
+	dropRemote: function (connection)
 	{
-		delete this.remotes[id];
+		delete this.remotes[connection.id];
 	},
 
 	onRemoteEnded: function (clientId)
 	{
+	//	console.log("ended connection");
 		this.dropRemote(clientId);
 	},
 	/**

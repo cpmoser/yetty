@@ -7,7 +7,8 @@ Ext.define("observ.util.persist.Mongo",
 		connect: function (params, cb, scope)
 		{
 			var
-				client = require("mongodb").MongoClient,
+				mongo  = require("mongodb"),
+				client = mongo.MongoClient,
 				conn,
 
 				onConnect = function (err, db)
@@ -24,6 +25,11 @@ Ext.define("observ.util.persist.Mongo",
 						cb.apply(scope, [this]);
 					}
 				};
+
+			this.id = function (stringId)
+			{
+				return new mongo.ObjectID(stringId);
+			};
 
 			this.conn = function ()
 			{
