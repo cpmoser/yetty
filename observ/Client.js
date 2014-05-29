@@ -15,10 +15,6 @@ Ext.define("observ.Client",
 			me    = this,
 			dnode = require("dnode");
 
-		// this.connection = dnode.connect(5050, Ext.bind(this.onConnect, this));
-
-		// this.connect();
-
 		Ext.ClassManager.setAlias("observ.util.persist.Persist", "observ.util.Persist");
 		Ext.require("observ.util.persist.Persist");
 
@@ -49,36 +45,62 @@ Ext.define("observ.Client",
 		this.onConnect(remote, stream);
 	},
 
-	onConnect2: function (remote, stream)
+	onConnect: function (remote, dnode)
 	{
-		remote.get("test");
-	},
+		console.log("onConnect", dnode.stream._events);
 
-	onConnect: function (remote, stream)
-	{
-		console.log("remote");
-		console.log(remote);
+		console.log("dnode events", dnode._events);
 
-		stream.on("fail", function ()
+		dnode.on("error", function ()
+		{
+			console.log("DNODE ERROR", arguments);
+		});
+
+		dnode.stream.on("fail", function ()
 		{
 			console.log("connection failed", arguments);
 		});
 
-		var connection = Ext.create("observ.util.connection.Connection", stream, remote.connectionId);
+		var connection = Ext.create("observ.util.connection.Connection", dnode.stream, remote.connectionId);
 
 		this.connection = connection;
+
+//		var myRemoter = Ext.create("observ.util.Remoter");
+
+		remote.getInstance(Ext.bind(this.onGetInstance, this));
+
+		return;
 
 		var
 			sb      = Ext.create(remote.$className),
 			remoter = Ext.create("observ.util.Remoter");
 
+
 		sb.setRemoter(remoter);
+
 		remote.addRemote(remoter);
 
-		this.sb       = sb;
-		this.remoteSb = remote;
+		this.instance = sb;
+		this.remote   = remote;
 
 		this.fireEvent("connect", this, remote);
+	},
+
+	onGetInstance: function ($className, data, theirRemoter)
+	{
+		try
+		{
+			this.instance = Ext.create($className, data);
+			this.instance.remoter.connect(this.connection, theirRemoter, theirRemoter.connect);
+		}
+		catch (e)
+		{
+			console.log("error", e.stack);
+		}
+
+		console.log(this.instance);
+
+		console.log(data);
 	},
 
 	onConnectRemoter: function ()
@@ -88,7 +110,9 @@ Ext.define("observ.Client",
 
 	get: function (id, cb, scope)
 	{
-		if (!this.remoteSb)
+		console.log("calling get?");
+
+		if (!this.remote)
 		{
 			this.on("connect", Ext.bind(this.get, this, arguments, false));
 			return;
@@ -96,7 +120,7 @@ Ext.define("observ.Client",
 
 		var myRemoter = Ext.create("observ.util.Remoter");
 
-		this.remoteSb.get(
+		this.remote.get(
 			id,
 			{
 				receive: Ext.bind(myRemoter.receive, myRemoter, [this.connection], 0)
@@ -123,7 +147,7 @@ Ext.define("observ.Client",
 
 	create: function (className, data, cb, scope)
 	{
-		if (!this.remoteSb)
+		if (!this.remote)
 		{
 			this.on("connect", Ext.bind(this.create, this, arguments, false));
 			return;
@@ -131,7 +155,7 @@ Ext.define("observ.Client",
 
 		var myRemoter = Ext.create("observ.util.Remoter");
 
-		this.remoteSb.create(
+		this.remote.create(
 			className,
 			data,
 			myRemoter,

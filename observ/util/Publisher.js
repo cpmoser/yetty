@@ -14,8 +14,6 @@ Ext.define("observ.util.Publisher",
 	constructor: function ()
 	{
 		this.callParent();
-
-		this.setRemoter(Ext.create("observ.util.Remoter"));
 	},
 
 	onBeforePublish: function ()

@@ -56,14 +56,14 @@
 		{
 			ns:       "observ",
 			location: "https://world.observjs.com"
-		}, db);
+		}/*, db*/);
 
 		this.instance.startup(Ext);
 
 		// create a test object for this sandbox
-		var test = this.instance.create(this, "observ.data.Test", {foo: "bar"});
+		//var test = this.instance.create(this, "observ.data.Test", {foo: "bar"});
 
-		test.alter();
+		//test.alter();
 
 //		this.instance.add(test);
 
@@ -116,4 +116,4 @@
 		console.log(this);
 		console.log(arguments);
 	}
- });
+});

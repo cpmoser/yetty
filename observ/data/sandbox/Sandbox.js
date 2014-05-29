@@ -9,6 +9,51 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 	return {
 
+		observ:
+		{
+			publish: "",
+			sync: "",
+
+			sync: "",
+			cb: "",
+			/**
+			 * specifies synced methods.  These are methods that are run independently by the caller/callee, e.g. "set" when run on one
+			 * peer will tell a remote peer to also call set on the other peer with the same arguments.
+			 */
+			receive:
+			{
+
+			},
+
+			/**
+			 * call differs from receive.  it requires a callback as its first argument, and it is designed to return results from a call made
+			 * a remote peer.
+			 */
+			callback:
+			{
+
+			},
+
+			subscriber:
+			{
+				set: true,
+				retrieve: function ()
+				{
+
+				}
+			},
+
+			publisher:
+			{
+
+			},
+
+			peer:
+			{
+
+			}
+		},
+
 		extend: "observ.data.Model",
 
 		fields:
@@ -47,7 +92,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 		},
 
-		constructor: function (data, persistence)
+		constructor: function (data/*, persistence*/)
 		{
 			this.callParent(arguments);
 
@@ -58,10 +103,12 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 				// create a new vm and set the loader path
 			}
 
-			this.persistence = persistence;
+		//	this.persistence = persistence;
 		},
 
-		get: function (connection, id, theirRemoter, clientCb)
+
+
+		retrieve: function (connection, id, theirRemoter, clientCb)
 		{
 			var o = objects[id];
 
@@ -75,9 +122,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 				{
 					var g = collection.findOne({_id: this.persistence.id(id)}, function (err, doc)
 					{
-						console.log("found object");
-						console.log(doc);
-
 						objects[id] = Ext.create(doc.className, doc.data, doc._id);
 
 						var o = objects[id];
@@ -95,8 +139,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 					console.log("error!");
 					console.log(e);
 				}
-
-				console.log(g);
 
 				return;
 			}

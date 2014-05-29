@@ -21,7 +21,7 @@ Ext.define("observ.util.Subscriber",
 	{
 		this.callParent();
 
-		this.remotes = {};
+		this.remoter = Ext.create("observ.util.Remoter");
 
 		// just work with the "set" method right now
 		// this.set = Ext.Function.createSequence(this.set, Ext.bind(this.publish, this, ["set"], 0));

@@ -6,30 +6,28 @@ Ext.define("observ.data.sandbox.Connection",
 {
 	extend: "Ext.Base",
 
-	mixins: 
+	mixins:
 	{
 		observable: "Ext.util.Observable"
 	},
 
-	constructor: function (sb, remote, stream)
+	constructor: function (sb, remote, dnode)
 	{
+		// dnode events
+		// end, local, remote, unpipe, drain, error, close, finish, data
+		var stream = dnode.stream;
+
+		console.log("dnode events");
+		console.log(dnode._events);
+
+		console.log("connection established", stream);
+
 		this.callParent(arguments);
+		this.mixins.observable.constructor.call(this);
 
 		var me = this;
 
-		this.mixins.observable.constructor.call(this);
 		this.addEvents("end");
-
-		//this.stream = stream;
-		this.id = Ext.id();
-
-		this.get        = Ext.bind(sb.get, sb, [this], 0);
-
-		this.create     = Ext.bind(sb.create, sb, [this], 0);
-		this.data       = sb.data;
-		this.$className = sb.$className;
-		this.addRemote  = Ext.bind(sb.addRemote, sb, [this], 0);
-		this.connectionId = this.id;
 
 		stream.on("error", function ()
 		{
@@ -56,8 +54,35 @@ Ext.define("observ.data.sandbox.Connection",
 
 		stream.on("end", function ()
 		{
-			console.log("connection ended");
+			console.log("connection ended", arguments);
 		});
+
+		this.getInstance = function (remoteCallback)
+		{
+			try
+			{
+				console.log("sbdata", sb.getData());
+
+				remoteCallback(sb.$className, sb.data, sb.remoter.getConnector());
+			}
+			catch (e)
+			{
+				console.log("error", e);
+			}
+		};
+
+		return;
+
+		//this.stream = stream;
+		this.id = Ext.id();
+
+		this.get        = Ext.bind(sb.get, sb, [this], 0);
+
+		this.create     = Ext.bind(sb.create, sb, [this], 0);
+		this.data       = sb.data;
+		this.$className = sb.$className;
+		this.addRemote  = Ext.bind(sb.addRemote, sb, [this], 0);
+		this.connectionId = this.id;
 	},
 
 	onEnded: function ()
