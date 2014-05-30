@@ -26,20 +26,41 @@ Ext.define("observ.util.Remoter",
 	 *
 	 * p2p connect: theirRemoter.connect(myRemoter, myRemoter.connect.bind(this))
 	 */
-	connect: function (conn, theirRemoter, remoteCallback)
+	connect: function (connection, theirRemoter, remoteCallback)
 	{
-		this.remotes[conn.id] = theirRemoter;
+		console.log("connect", connection);
+
+		this.remotes[connection.id] = theirRemoter;
 
 		if ("function" === typeof remoteCallback)
 		{
-			remoteCallback(this.getConnector(conn));
+			remoteCallback(this.getConnector(connection));
 		}
 
-		console.log("connection established");
+		try
+		{
+			connection.on("destroy", Ext.bind(this.disconnect, this));
+		}
+		catch (e)
+		{
+			console.log(connection);
+		}
+		console.log("connect: " + connection.id);
+	},
+
+	disconnect: function (connection)
+	{
+		delete this.remotes[connection.id];
+
+		console.log("disconnect: " + connection.id);
 	},
 
 	getConnector: function (conn)
 	{
+		console.log("conn is empty?");
+
+		console.log(conn);
+
 		return {
 			receive: Ext.bind(this.receive, this, [conn], 0),
 			connect: Ext.bind(this.connect, this, [conn], 0)

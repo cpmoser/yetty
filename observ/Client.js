@@ -11,10 +11,6 @@ Ext.define("observ.Client",
 	{
 		this.callParent(arguments);
 
-		var
-			me    = this,
-			dnode = require("dnode");
-
 		Ext.ClassManager.setAlias("observ.util.persist.Persist", "observ.util.Persist");
 		Ext.require("observ.util.persist.Persist");
 
@@ -47,46 +43,16 @@ Ext.define("observ.Client",
 
 	onConnect: function (remote, dnode)
 	{
-		console.log("onConnect", dnode.stream._events);
-
-		console.log("dnode events", dnode._events);
-
-		dnode.on("error", function ()
-		{
-			console.log("DNODE ERROR", arguments);
-		});
-
-		dnode.stream.on("fail", function ()
-		{
-			console.log("connection failed", arguments);
-		});
-
-		var connection = Ext.create("observ.util.connection.Connection", dnode.stream, remote.connectionId);
+		var connection = Ext.create("observ.data.sandbox.Connection", this, remote, dnode);
 
 		this.connection = connection;
 
-//		var myRemoter = Ext.create("observ.util.Remoter");
-
-		remote.getInstance(Ext.bind(this.onGetInstance, this));
+		remote.instance(Ext.bind(this.onInstance, this));
 
 		return;
-
-		var
-			sb      = Ext.create(remote.$className),
-			remoter = Ext.create("observ.util.Remoter");
-
-
-		sb.setRemoter(remoter);
-
-		remote.addRemote(remoter);
-
-		this.instance = sb;
-		this.remote   = remote;
-
-		this.fireEvent("connect", this, remote);
 	},
 
-	onGetInstance: function ($className, data, theirRemoter)
+	onInstance: function ($className, data, theirRemoter)
 	{
 		try
 		{
