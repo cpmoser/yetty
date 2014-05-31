@@ -2,7 +2,7 @@
  * copyright (c) 2014 Chris Moser (cpmoser@network54.com)
  */
 
-Ext.define("observ.data.sandbox.Connection",
+Ext.define("observ.util.Connection",
 {
 	extend: "Ext.Base",
 

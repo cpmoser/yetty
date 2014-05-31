@@ -80,7 +80,7 @@
 			dnode = require('dnode'),
 			net   = require('net'),
 			i     = this.instance,
-			c     = Ext.bind(Ext.create, Ext, ["observ.data.sandbox.Connection", i], 0);
+			c     = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0);
 
 		/*c =
 		{
@@ -102,7 +102,7 @@
 		{
 		//	var d = dnode(Ext.bind(Ext.create, Ext, ["observ.data.sandbox.Connection", i], 0));
 
-			var d = dnode(Ext.create("observ.data.sandbox.Connection", i, null, stream));
+			var d = dnode(Ext.create("observ.util.Connection", i, null, stream));
 			d.pipe(stream).pipe(d);
 		});
 

@@ -43,7 +43,7 @@ Ext.define("observ.Client",
 
 	onConnect: function (remote, dnode)
 	{
-		var connection = Ext.create("observ.data.sandbox.Connection", this, remote, dnode);
+		var connection = Ext.create("observ.util.Connection", this, remote, dnode);
 
 		this.connection = connection;
 
