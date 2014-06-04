@@ -92,7 +92,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 		},
 
-		constructor: function (data/*, persistence*/)
+		constructor: function (data, persistence)
 		{
 			this.callParent(arguments);
 
@@ -103,10 +103,8 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 				// create a new vm and set the loader path
 			}
 
-		//	this.persistence = persistence;
+			this.persistence = persistence;
 		},
-
-
 
 		retrieve: function (connection, id, theirRemoter, clientCb)
 		{

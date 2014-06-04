@@ -9,19 +9,6 @@ Ext.define("observ.util.Publisher",
 	extend: "observ.util.Subscriber",
 
 	/**
-	 * Constructor
-	 */
-	constructor: function ()
-	{
-		this.callParent();
-	},
-
-	onBeforePublish: function ()
-	{
-		return true;
-	},
-
-	/**
 	 * Publish updates to a remote subscriber
 	 *
 	 * @param {mixed} value

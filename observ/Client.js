@@ -57,16 +57,12 @@ Ext.define("observ.Client",
 		try
 		{
 			this.instance = Ext.create($className, data);
-			this.instance.remoter.connect(this.connection, theirRemoter, theirRemoter.connect);
+			this.instance.connect(this.connection, theirRemoter, theirRemoter.connect);
 		}
 		catch (e)
 		{
 			console.log("error", e.stack);
 		}
-
-		console.log(this.instance);
-
-		console.log(data);
 	},
 
 	onConnectRemoter: function ()
@@ -76,8 +72,6 @@ Ext.define("observ.Client",
 
 	get: function (id, cb, scope)
 	{
-		console.log("calling get?");
-
 		if (!this.remote)
 		{
 			this.on("connect", Ext.bind(this.get, this, arguments, false));
@@ -98,8 +92,6 @@ Ext.define("observ.Client",
 	onGet: function (id, className, config, theirRemoter, myRemoter, cb, scope)
 	{
 		var o = Ext.create(className, config);
-
-		console.log(this.connection);
 
 		// object.addSubscriber(objectRemoter)
 		o.setRemoter(myRemoter);

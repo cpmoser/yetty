@@ -6,32 +6,39 @@ Ext.define("observ.util.Subscriber",
 {
 	extend: "Ext.util.Observable",
 
-	/*onClassMixedIn: function (cls)
+	/** onClassMixedIn: -- may be useful to update exisiting class methods
 	{
-		console.log("MIXED INTO CLASS");
-		console.log(cls.observ);
-		console.log(cls.prototype);
-
 		Ext.iterate(cls.observ, function (method, value)
 		{
 		});
 	},
-	*/
+	**/
+
 	constructor: function ()
 	{
 		this.callParent();
 
-		this.remoter = Ext.create("observ.util.Remoter");
+		var remoter = Ext.create("observ.util.Remoter");
 
-		// just work with the "set" method right now
-		// this.set = Ext.Function.createSequence(this.set, Ext.bind(this.publish, this, ["set"], 0));
+		remoter.on("receive", this.onReceive, this);
 
-		// this.set = Ext.bind(this.$call, this, [this, "set", this.set], 0);
+		this.connect = function (connection, theirRemoter, remoteConnectCallback)
+		{
+			remoter.connect.apply(remoter, arguments);
+			this.remote = Ext.create("observ.util.Remote", remoter, theirRemoter);
+		};
+
+		this.getConnector = function ()
+		{
+			return remoter.getConnector.apply(remoter, arguments);
+		};
 
 		if (this.observ)
 		{
 			var me = this, caller = this.$call;
 
+			// peered methods are ones which are called on the subscriber first, then broadcast to the remotes, with the method run
+			// independently on each remote (an ack message is sent back to the original publisher)
 			Ext.iterate(this.observ.peer, function (method, value)
 			{
 				var fn = this[method];
@@ -43,23 +50,23 @@ Ext.define("observ.util.Subscriber",
 
 				this.addEvents("remote-" + method);
 			}, this);
+
+			// remote methods are ones which are proxied to a remote, and the results are passed back to the client
+			/**
+			 * remote methods should be added as an additional object to the subscriber, e.g.
+			 * var sandbox.remote.get() - which returns a promise that executes on the server and returns a value/object
+			 */
+
+
+			this.observ.callable = {get: true};
+
+			Ext.iterate(this.observ.callable, function (method, value)
+			{
+				var fn = this[method];
+
+				remoter.createCallable("fetch", this);
+			}, this);
 		}
-
-		/*var me = this, fn = this.set, name = "set", caller = this.$call;
-
-		this.set = function ()
-		{
-			try
-			{
-				caller.apply(this, [me, name, fn, arguments]);
-			}
-			catch (e)
-			{
-				// perhaps fire an event here
-			}
-		};
-
-		this.addEvents("remote-set");*/
 	},
 
 	"$call": function (me, method, fn, args)
@@ -146,55 +153,6 @@ Ext.define("observ.util.Subscriber",
 		}
 
 		return false;
-	},
-
-	/**
-	 * Add a remote publisher
-	 *
-	 * @param {EventEmitter}
-	 */
-	setRemoter: function (remoter)
-	{
-		this.remoter = remoter;
-		this.remoter.on("receive", this.onReceive, this);
-	},
-
-	/**
-	 * Add a remote
-	 *
-	 * @param {EventEmitter} emitter     Subscriber emitter
-	 * @param {Object} client connection Subscriber connection
-	 */
-	addRemote: function (connection, remoter)
-	{
-		this.remotes[connection.id] =
-		{
-			remoter: remoter
-		};
-
-		connection.on("end", this.dropRemote, this);
-
-	//	var ended = Ext.bind(this.onRemoteEnded, this, [connection.connection], false);
-
-	//	connection.stream.on("end", ended);
-	//	connection.stream.on("error", ended);
-
-		var myRemoter =
-		{
-			receive: Ext.bind(this.remoter.receive, this.remoter, [connection], 0)
-		};
-
-		return myRemoter;
-	},
-
-	/**
-	 * Remove a remote
-	 *
-	 * @param {String} id Client connection ID
-	 */
-	dropRemote: function (connection)
-	{
-		delete this.remotes[connection.id];
 	},
 
 	onRemoteEnded: function (clientId)

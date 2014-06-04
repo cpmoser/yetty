@@ -16,9 +16,20 @@ Ext.define("observ.util.Remoter",
 		this.callParent(arguments);
 		this.mixins.observable.constructor.apply(this, arguments);
 
-		this.remotes = {};
+		this.remotes  = {};
+		this.callable = {};
 
-		this.addEvents("receive");
+		this.addEvents("remote");
+	},
+
+	createPromise: function (remoteMethod)
+	{
+		var promise =
+		{
+			then: {}
+		};
+
+		return promise;
 	},
 
 	/**
@@ -28,7 +39,7 @@ Ext.define("observ.util.Remoter",
 	 */
 	connect: function (connection, theirRemoter, remoteCallback)
 	{
-		console.log("connect", connection);
+		this.fireEvent("beforeconnect", this, connection, theirRemoter);
 
 		this.remotes[connection.id] = theirRemoter;
 
@@ -45,26 +56,49 @@ Ext.define("observ.util.Remoter",
 		{
 			console.log(connection);
 		}
-		console.log("connect: " + connection.id);
+
+		this.fireEvent("connect", this, connection, theirRemoter);
+
+		return theirRemoter;
 	},
 
 	disconnect: function (connection)
 	{
+		this.fireEvent("beforedisconnect", this, connection);
 		delete this.remotes[connection.id];
+		this.fireEvent("disconnect", this, connection);
+	},
 
-		console.log("disconnect: " + connection.id);
+	call: function (connection, methodName, object)
+	{
+
+	},
+
+	onRemoteCalled: function ()
+	{
+
 	},
 
 	getConnector: function (conn)
 	{
-		console.log("conn is empty?");
+		var callable = [];
 
-		console.log(conn);
+		Ext.iterate(this.callable, function (methodName)
+		{
+			callable.push(methodName);
+		});
 
 		return {
-			receive: Ext.bind(this.receive, this, [conn], 0),
-			connect: Ext.bind(this.connect, this, [conn], 0)
+			receive:  Ext.bind(this.receive, this, [conn], 0),
+			connect:  Ext.bind(this.connect, this, [conn], 0),
+			call:     Ext.bind(this.call, this, [conn], 0),
+			callable: callable
 		};
+	},
+
+	createCallable: function (name, object)
+	{
+		this.callable[name] = object;
 	},
 
 	/**

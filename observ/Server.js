@@ -36,10 +36,10 @@
 
 		this.on("ready", Ext.bind(this.listen, this, [port || 5050, httpPort || 5051], false));
 
-		this.connect();
+		this.connectPersistence();
 	},
 
-	connect: function ()
+	connectPersistence: function ()
 	{
 		Ext.ClassManager.setAlias("observ.util.persist.Mongo", "observ.util.Persist");
 
@@ -80,14 +80,11 @@
 			dnode = require('dnode'),
 			net   = require('net'),
 			i     = this.instance,
-			c     = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0);
+			c     = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0),
+			d     = dnode(c),
+			server;
 
-		/*c =
-		{
-			get: Ext.bind(this.get, this)
-		};*/
-
-		var d = dnode(c), server = d.listen(port);
+		server = d.listen(port);
 
 		var
 			ec   = require('ecstatic')({root: ".", autoIndex: true, baseDir: "/"}),
@@ -109,11 +106,5 @@
 		sock.install(httpServer, "/observ-connect");
 
 		return this;
-	},
-
-	get: function ()
-	{
-		console.log(this);
-		console.log(arguments);
 	}
 });

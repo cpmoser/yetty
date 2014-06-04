@@ -29,7 +29,7 @@ Ext.define("observ.util.Connection",
 		{
 			try
 			{
-				remoteCallback(object.$className, object.data, object.remoter.getConnector(me));
+				remoteCallback(object.$className, object.data, object.getConnector(me));
 			}
 			catch (e)
 			{
