@@ -149,6 +149,18 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			);
 		},
 
+		getFoo: function ()
+		{
+			var q = require("Q");
+
+			var promise = require("Q").Promise(function (resolve, reject, notify)
+			{
+				resolve("BAR");
+			});
+
+			return promise;
+		},
+
 		onGet: function (cb, object)
 		{
 			cb();

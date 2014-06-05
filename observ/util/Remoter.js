@@ -69,12 +69,33 @@ Ext.define("observ.util.Remoter",
 		this.fireEvent("disconnect", this, connection);
 	},
 
-	call: function (connection, methodName, object)
+	/**
+	 * Local call to object method
+	 *
+	 * This call is executed by a remote beacon and passed to the callable set by this beacon's object.  Note that all
+	 * remotely callable functions must return a promise.
+	 */
+	call: function (methodName, args, remoteCallback)
 	{
-
+		this.callable[methodName].apply(this, args).then(Ext.bind(this.onCall, this, [remoteCallback], true));
 	},
 
-	onRemoteCalled: function ()
+	/**
+	 * Callback to the local object method call.  Passes back the result of the
+	 */
+	onCall: function (result, remoteCallback)
+	{
+		// translate result if necessary?
+
+		remoteCallback(result);
+	},
+
+	callRemote: function (connectionId, methodName, args, callback)
+	{
+		this.remotes[connectionId].call(methodName, args, Ext.bind(this.onCallRemote, this, [callback]));
+	},
+
+	onCallRemote: function (callback, response)
 	{
 
 	},
@@ -96,9 +117,9 @@ Ext.define("observ.util.Remoter",
 		};
 	},
 
-	createCallable: function (name, object)
+	createCallable: function (methodName, object)
 	{
-		this.callable[name] = object;
+		this.callable[methodName] = Ext.bind(object[methodName], object);
 	},
 
 	/**
