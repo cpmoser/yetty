@@ -105,6 +105,46 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			this.persistence = persistence;
 		},
 
+		getObject: function (id)
+		{
+			console.log("remote call?");
+			var promise = require("Q").Promise(function (resolve, reject, notify)
+			{
+				console.log("in promise execute?");
+
+				var o = objects[id], c, g;
+
+				if (o)
+				{
+					resolve(o);
+				}
+				else
+				{
+					console.log("in database call");
+
+					try
+					{
+						c = this.persistence.conn().collection("objects");
+						g = c.findOne({_id: this.persistence.id(id)}, function (err, doc)
+						{
+
+							console.log("db");
+							objects[id] = Ext.create(doc.className, doc.data, doc._id);
+
+							resolve(objects[id]);
+						});
+					}
+					catch (e)
+					{
+						console.log(e);
+					}
+					console.log(c);
+				}
+			});
+
+			return promise;
+		},
+
 		retrieve: function (connection, id, theirRemoter, clientCb)
 		{
 			var o = objects[id];

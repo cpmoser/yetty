@@ -22,16 +22,6 @@ Ext.define("observ.util.Remoter",
 		this.addEvents("remote");
 	},
 
-	createPromise: function (remoteMethod)
-	{
-		var promise =
-		{
-			then: {}
-		};
-
-		return promise;
-	},
-
 	/**
 	 * connect a remote
 	 *
@@ -77,23 +67,18 @@ Ext.define("observ.util.Remoter",
 	 */
 	call: function (connection, methodName, args, remoteCallback)
 	{
-		console.log("calling local method from remote");
-		console.log(arguments);
+		console.log("call", methodName, args);
 
-		this.callable[methodName].apply(this, args).then(function ()
-		{
-			console.log("without cb", arguments);
-		});
 		this.callable[methodName].apply(this, args).then(Ext.bind(this.onCall, this, [remoteCallback], true));
 	},
 
 	/**
-	 * Callback to the local object method call.  Passes back the result of the
+	 * Callback to the local object method call.  Passes back the result of the method call via remote callback
 	 */
 	onCall: function (result, remoteCallback)
 	{
 		// translate result if necessary?
-		console.log("on call done, sending back to requester", arguments);
+		console.log("replying to remote", result);
 		remoteCallback(result);
 	},
 
@@ -104,6 +89,8 @@ Ext.define("observ.util.Remoter",
 
 	onCallRemote: function (callback, response)
 	{
+		console.log("we got a response of " + response);
+
 		if ("function" === typeof callback)
 		{
 			callback(response);

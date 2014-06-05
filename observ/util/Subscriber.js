@@ -27,11 +27,18 @@ Ext.define("observ.util.Subscriber",
 			remoter.connect.apply(remoter, arguments);
 			this.remote = Ext.create("observ.util.Remote", Ext.bind(remoter.callRemote, remoter, [connection.id], 0), theirRemoter.callable);
 
-			this.remote.getFoo().then(function (b)
+			try
 			{
-				console.log("remote foo");
-				console.log("WE GOT " + b);
-			});
+				this.remote.getObject("5382c3e3bcd02d14171bd45a").then(function (b)
+				{
+					console.log("remote foo");
+					console.log("WE GOT " + b);
+				});
+			}
+			catch (e)
+			{
+				console.log(e);
+			}
 		};
 
 		this.getConnector = function ()
@@ -64,7 +71,7 @@ Ext.define("observ.util.Subscriber",
 			 */
 
 
-			this.observ.callable = {getFoo: true};
+			this.observ.callable = {getFoo: true, getObject: true};
 
 			Ext.iterate(this.observ.callable, function (methodName, value)
 			{
