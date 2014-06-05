@@ -29,6 +29,7 @@ Ext.define("observ.util.Subscriber",
 
 			this.remote.getFoo().then(function (b)
 			{
+				console.log("remote foo");
 				console.log("WE GOT " + b);
 			});
 		};

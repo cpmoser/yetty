@@ -75,8 +75,15 @@ Ext.define("observ.util.Remoter",
 	 * This call is executed by a remote beacon and passed to the callable set by this beacon's object.  Note that all
 	 * remotely callable functions must return a promise.
 	 */
-	call: function (methodName, args, remoteCallback)
+	call: function (connection, methodName, args, remoteCallback)
 	{
+		console.log("calling local method from remote");
+		console.log(arguments);
+
+		this.callable[methodName].apply(this, args).then(function ()
+		{
+			console.log("without cb", arguments);
+		});
 		this.callable[methodName].apply(this, args).then(Ext.bind(this.onCall, this, [remoteCallback], true));
 	},
 
@@ -86,18 +93,21 @@ Ext.define("observ.util.Remoter",
 	onCall: function (result, remoteCallback)
 	{
 		// translate result if necessary?
-
+		console.log("on call done, sending back to requester", arguments);
 		remoteCallback(result);
 	},
 
 	callRemote: function (connectionId, methodName, args, callback)
 	{
-		this.remotes[connectionId].call(methodName, args, Ext.bind(this.onCallRemote, this, [callback]));
+		this.remotes[connectionId].call(methodName, args, Ext.bind(this.onCallRemote, this, [callback], 0));
 	},
 
 	onCallRemote: function (callback, response)
 	{
-
+		if ("function" === typeof callback)
+		{
+			callback(response);
+		}
 	},
 
 	getConnector: function (conn)

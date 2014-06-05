@@ -19,10 +19,15 @@ Ext.define("observ.util.Remote",
 
 				return q.Promise(function (resolve, reject, notify)
 				{
-					remoteCallable(methodName, methodArgs);
+					try
+					{
+						remoteCallable(methodName, methodArgs, resolve);
+					}
+					catch (e)
+					{
+						reject();
+					}
 				});
-
-			//	theirRemoter.call(methodName, arguments);
 			};
 		}, this);
 	}

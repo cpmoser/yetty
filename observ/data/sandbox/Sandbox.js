@@ -14,7 +14,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			publish: "",
 			sync: "",
 
-			sync: "",
 			cb: "",
 			/**
 			 * specifies synced methods.  These are methods that are run independently by the caller/callee, e.g. "set" when run on one
@@ -159,11 +158,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			});
 
 			return promise;
-		},
-
-		onGet: function (cb, object)
-		{
-			cb();
 		},
 
 		create: function (connection, className, data, theirRemoter, clientCb)
