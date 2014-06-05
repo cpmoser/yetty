@@ -56,7 +56,7 @@
 		{
 			ns:       "observ",
 			location: "https://world.observjs.com"
-		}/*, db*/);
+		}, db);
 
 		this.instance.startup(Ext);
 

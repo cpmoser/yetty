@@ -107,11 +107,10 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 		getObject: function (id)
 		{
-			console.log("remote call?");
-			var promise = require("Q").Promise(function (resolve, reject, notify)
-			{
-				console.log("in promise execute?");
+			var me = this, promise, persist = this.persistence;
 
+			promise = require("Q").Promise(function (resolve, reject, notify)
+			{
 				var o = objects[id], c, g;
 
 				if (o)
@@ -120,17 +119,12 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 				}
 				else
 				{
-					console.log("in database call");
-
 					try
 					{
-						c = this.persistence.conn().collection("objects");
+						c = persist.conn().collection("objects");
 						g = c.findOne({_id: this.persistence.id(id)}, function (err, doc)
 						{
-
-							console.log("db");
 							objects[id] = Ext.create(doc.className, doc.data, doc._id);
-
 							resolve(objects[id]);
 						});
 					}
@@ -138,7 +132,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 					{
 						console.log(e);
 					}
-					console.log(c);
 				}
 			});
 

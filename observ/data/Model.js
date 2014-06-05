@@ -11,8 +11,8 @@ Ext.define("observ.data.Model",
 		/**
 		 * defaults to the subscriber mixin *unless* the observ.util.Observable alias is defined (e.g. as a Publisher)
 		 */
-		observable: Ext.ClassManager.getByAlias("observ.util.Observable") || "observ.util.Subscriber"/*,
-		persist:    Ext.ClassManager.getByAlias("observ.util.Persist") || undefined*/
+		observable: Ext.ClassManager.getByAlias("observ.util.Observable") || "observ.util.Subscriber",
+		persist:    Ext.ClassManager.getByAlias("observ.util.Persist") || undefined
 	},
 
 	statics:
@@ -28,9 +28,9 @@ Ext.define("observ.data.Model",
 	{
 		this.callParent(arguments);
 
-		/*if (this.mixins.persist)
+		if (this.mixins.persist)
 		{
 			this.mixins.persist.constructor.call(this, arguments);
-		}*/
+		}
 	}
 });
