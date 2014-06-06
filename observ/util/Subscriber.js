@@ -37,9 +37,11 @@ Ext.define("observ.util.Subscriber",
 		{
 			var me = this, caller = this.$call;
 
-			// peered methods are ones which are called on the subscriber first, then broadcast to the remotes, with the method run
-			// independently on each remote (an ack message is sent back to the original publisher)
-			Ext.iterate(this.observ.peer, function (method, value)
+			/**
+			 * broadcast methods are called on the local object, then broadcast to the remotes, with the method run
+			 * independently on each remote (an ack message is sent back to the original publisher)
+			 */
+			Ext.iterate(this.observ.broadcast, function (method, value)
 			{
 				var fn = this[method];
 
@@ -51,15 +53,11 @@ Ext.define("observ.util.Subscriber",
 				this.addEvents("remote-" + method);
 			}, this);
 
-			// remote methods are ones which are proxied to a remote, and the results are passed back to the client
 			/**
-			 * remote methods should be added as an additional object to the subscriber, e.g.
+			 * callable methods should be added as an additional object to the subscriber, e.g.
 			 * var sandbox.remote.get() - which returns a promise that executes on the server and returns a value/object
+			 * note that all callable methods should return a Promise object
 			 */
-
-
-			this.observ.callable = {getFoo: true, getObject: true};
-
 			Ext.iterate(this.observ.callable, function (methodName, value)
 			{
 				remoter.createCallable(methodName, this);
@@ -158,6 +156,7 @@ Ext.define("observ.util.Subscriber",
 	//	console.log("ended connection");
 		this.dropRemote(clientId);
 	},
+
 	/**
 	 * Executes on a remote event
 	 *

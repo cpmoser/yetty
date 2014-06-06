@@ -14,13 +14,13 @@ Ext.define("observ.Client",
 		Ext.ClassManager.setAlias("observ.util.persist.Persist", "observ.util.Persist");
 		Ext.require("observ.util.persist.Persist");
 
-		this.addEvents("connect");
+		this.addEvents("connect", "instance");
 	},
 
 	connect: function ()
 	{
 		var
-			dnode = require('dnode'),
+			dnode      = require('dnode'),
 			connection = dnode.connect(5050, Ext.bind(this.onConnect, this));
 	},
 
@@ -64,10 +64,7 @@ Ext.define("observ.Client",
 			console.log("error", e.stack);
 		}
 
-		this.instance.remote.getObject("53850588814f6c0024268755").then(function (object)
-		{
-			console.log("got object", object);
-		});
+		this.fireEvent("instance", this.instance.remote);
 	},
 
 	onConnectRemoter: function ()

@@ -14,6 +14,7 @@ Ext.define("observ.util.Remoter",
 	constructor: function ()
 	{
 		this.callParent(arguments);
+
 		this.mixins.observable.constructor.apply(this, arguments);
 
 		this.remotes  = {};
@@ -52,6 +53,9 @@ Ext.define("observ.util.Remoter",
 		return theirRemoter;
 	},
 
+	/**
+	 * disconnect an existing connection
+	 */
 	disconnect: function (connection)
 	{
 		this.fireEvent("beforedisconnect", this, connection);
@@ -78,7 +82,26 @@ Ext.define("observ.util.Remoter",
 	},
 
 	/**
-	 * Callback to the local object method call.  Passes back the result of the method call via remote callback
+	 * Translate a local call result to be sent back to a remote
+	 */
+	onCallTranslate: function (result, remoteCallback)
+	{
+		if (result) // if result is promise
+		{
+			result.then(Ext.bind(this.onCallTranslate, this, [remoteCallback], true));
+		}
+		else if (result) // result is observable
+		{
+
+		}
+		else
+		{
+
+		}
+	},
+
+	/**
+	 * Passes back the result of a local call to remote callback
 	 */
 	onCall: function (result, remoteCallback)
 	{
@@ -100,11 +123,17 @@ Ext.define("observ.util.Remoter",
 		remoteCallback(result);
 	},
 
+	/**
+	 * Call a method on a remote object
+	 */
 	callRemote: function (connection, methodName, args, callback)
 	{
 		this.remotes[connection.id].call(methodName, args, Ext.bind(this.onCallRemote, this, [connection, callback], 0));
 	},
 
+	/**
+	 * Callback for a remote method call
+	 */
 	onCallRemote: function (connection, callback, response)
 	{
 		// check object manager cache
@@ -123,11 +152,14 @@ Ext.define("observ.util.Remoter",
 
 		if ("function" === typeof callback)
 		{
-			callback(response);
+			callback(o);
 		}
 	},
 
-	getConnector: function (conn)
+	/**
+	 * Get the connector (dnodeable method calls) used to establish a connection to a remote
+	 */
+	getConnector: function (connection)
 	{
 		var callable = [];
 
@@ -137,40 +169,53 @@ Ext.define("observ.util.Remoter",
 		});
 
 		return {
-			receive:  Ext.bind(this.receive, this, [conn], 0),
-			connect:  Ext.bind(this.connect, this, [conn], 0),
-			call:     Ext.bind(this.call, this, [conn], 0),
+			receive:  Ext.bind(this.receive, this, [connection], 0),
+			connect:  Ext.bind(this.connect, this, [connection], 0),
+			call:     Ext.bind(this.call, this, [connection], 0),
 			callable: callable
 		};
 	},
 
+	/**
+	 * Create a remotely callable reference to an object's method
+	 */
 	createCallable: function (methodName, object)
 	{
 		this.callable[methodName] = Ext.bind(object[methodName], object);
 	},
 
 	/**
-	 * Broadcast to all peers *except* the originating peer
+	 * Transmit to all peers *except* the originating peer
 	 */
-	broadcast: function (sourceConn, method, args)
+	transmit: function (connection, method, args)
 	{
+		Ext.iterate(this.remotes, function (remoteId, remote)
+		{
+			if (connection.id !== remoteId)
+			{
+				remote.remoter.receive(method, args);
+			}
+			else
+			{
+			//	console.log("send ack");
+			}
+		}, this);
 
+		return;
 	},
 
 	/**
-	 * Receive a message from a peer
+	 * Receive a broadcasted message from a remote
 	 */
 	receive: function (conn, method, args)
 	{
 		this.fireEvent("receive", conn, method, args);
 	},
 
+	/**
+	 * Acknowledge a broadcast message
+	 */
 	ack: function ()
-	{
-
-	},
-
-	return: function (conn, method, args)
 	{
 
 	}

@@ -11,45 +11,15 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 		observ:
 		{
-			publish: "",
-			sync: "",
-
-			cb: "",
-			/**
-			 * specifies synced methods.  These are methods that are run independently by the caller/callee, e.g. "set" when run on one
-			 * peer will tell a remote peer to also call set on the other peer with the same arguments.
-			 */
-			receive:
+			broadcast:
 			{
-
+				set: true
 			},
 
-			/**
-			 * call differs from receive.  it requires a callback as its first argument, and it is designed to return results from a call made
-			 * a remote peer.
-			 */
-			callback:
+			callable:
 			{
-
-			},
-
-			subscriber:
-			{
-				set: true,
-				retrieve: function ()
-				{
-
-				}
-			},
-
-			publisher:
-			{
-
-			},
-
-			peer:
-			{
-
+				getObject: true,
+				getObjectCacheCount: true
 			}
 		},
 
@@ -65,6 +35,16 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			{
 				name: "location",
 				type: "string"
+			},
+
+			{
+				name: "count",
+				type: "int"
+			},
+
+			{
+				name: "cacheCount",
+				type: "int"
 			}
 		],
 
@@ -125,10 +105,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 						g = c.findOne({_id: persist.id("53850588814f6c0024268755")}, function (err, doc)
 						{
-							console.log(err);
-							console.log("got doc");
-							console.log(doc);
-
 							objects[id] = Ext.create(doc.className, doc.data, doc._id);
 							resolve(objects[id]);
 						});
@@ -143,13 +119,11 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			return promise;
 		},
 
-		getFoo: function ()
+		getObjectCacheCount: function ()
 		{
-			var q = require("Q");
-
 			var promise = require("Q").Promise(function (resolve, reject, notify)
 			{
-				resolve("BAR");
+				resolve(Object.keys(objects).length);
 			});
 
 			return promise;
