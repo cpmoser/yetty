@@ -55,7 +55,8 @@
 		this.instance = Ext.create("observ.data.sandbox.Sandbox",
 		{
 			ns:       "observ",
-			location: "https://world.observjs.com"
+			location: "https://world.observjs.com",
+			foo:      "bar"
 		}, db);
 
 		this.instance.startup(Ext);
@@ -97,10 +98,17 @@
 
 		var sock = shoe(function (stream)
 		{
+			var
+				wc = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0),
+				wd = dnode(wc);
 		//	var d = dnode(Ext.bind(Ext.create, Ext, ["observ.data.sandbox.Connection", i], 0));
 
-			var d = dnode(Ext.create("observ.util.Connection", i, null, stream));
-			d.pipe(stream).pipe(d);
+		//	var
+		//		c = Ext.bind(Ext.create, Ext, ["observ.util.Connection"], i], 0),
+		//		d = dnode(c);
+			wd.stream = stream;
+
+			wd.pipe(stream).pipe(wd);
 		});
 
 		sock.install(httpServer, "/observ-connect");

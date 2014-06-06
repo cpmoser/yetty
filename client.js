@@ -21,11 +21,19 @@ catch (e)
 
 try
 {
-	client.on("instance", function (remoteInstance)
+	client.on("instance", function (instance)
 	{
-		console.log(remoteInstance);
+		var remote = instance.remote;
 
-		var remote = remoteInstance;
+		try
+		{
+			instance.set("foo", "foobar");
+		}
+		catch (e)
+		{
+			console.log(e.message);
+			console.log(e.stack);
+		}
 
 		try
 		{

@@ -41,10 +41,6 @@ Ext.define("observui.view.Viewport",
 			]
 		});
 
-
-	//	this.client = Ext.create("observ.Client");
-	//	this.client.connectHttp();
-
 		this.callParent([config]);
 	},
 
@@ -54,16 +50,16 @@ Ext.define("observui.view.Viewport",
 
 		this.on("render", function ()
 		{
-			this.client = Ext.create("observ.Client");
-			this.client.on("connect", this.onConnection, this);
-			this.client.connectHttp();
+			this.client = Ext.create("observ.WebClient");
+			this.client.on("instance", this.onInstance, this);
+			this.client.connect();
 		}, this);
 	},
 
-	onConnection: function ()
+	onInstance: function (instance)
 	{
+		alert("instance received");
 		this.getLayout().setActiveItem(1);
-		this.client.get(2, this.onObjectReceived, this);
 	},
 
 	onObjectReceived: function (obj)

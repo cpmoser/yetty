@@ -45,6 +45,11 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			{
 				name: "cacheCount",
 				type: "int"
+			},
+
+			{
+				name: "foo",
+				type: "string"
 			}
 		],
 

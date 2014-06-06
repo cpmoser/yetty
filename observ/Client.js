@@ -24,23 +24,6 @@ Ext.define("observ.Client",
 			connection = dnode.connect(5050, Ext.bind(this.onConnect, this));
 	},
 
-	connectHttp: function ()
-	{
-		var
-			shoe   = require("shoe"),
-			stream = shoe('/observ-connect'),
-			dnode  = require("dnode"),
-			d      = dnode();
-
-		d.on("remote", Ext.bind(this.onHttpConnect, this, [stream], true));
-		d.pipe(stream).pipe(d);
-	},
-
-	onHttpConnect: function (remote, dnode, stream)
-	{
-		this.onConnect(remote, stream);
-	},
-
 	onConnect: function (remote, dnode)
 	{
 		var connection = Ext.create("observ.util.Connection", this, remote, dnode);
@@ -64,7 +47,7 @@ Ext.define("observ.Client",
 			console.log("error", e.stack);
 		}
 
-		this.fireEvent("instance", this.instance.remote);
+		this.fireEvent("instance", this.instance);
 	},
 
 	onConnectRemoter: function ()

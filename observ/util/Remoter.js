@@ -171,6 +171,7 @@ Ext.define("observ.util.Remoter",
 		return {
 			receive:  Ext.bind(this.receive, this, [connection], 0),
 			connect:  Ext.bind(this.connect, this, [connection], 0),
+			ack:      Ext.bind(this.ack, this, [connection], 0),
 			call:     Ext.bind(this.call, this, [connection], 0),
 			callable: callable
 		};
@@ -191,12 +192,15 @@ Ext.define("observ.util.Remoter",
 	{
 		Ext.iterate(this.remotes, function (remoteId, remote)
 		{
+			console.log(remote);
+
 			if (connection.id !== remoteId)
 			{
-				remote.remoter.receive(method, args);
+				remote.receive(method, args);
 			}
 			else
 			{
+				remote.ack(method);
 			//	console.log("send ack");
 			}
 		}, this);
@@ -207,9 +211,9 @@ Ext.define("observ.util.Remoter",
 	/**
 	 * Receive a broadcasted message from a remote
 	 */
-	receive: function (conn, method, args)
+	receive: function (connection, method, args)
 	{
-		this.fireEvent("receive", conn, method, args);
+		this.fireEvent("receive", connection, method, args);
 	},
 
 	/**
@@ -217,6 +221,6 @@ Ext.define("observ.util.Remoter",
 	 */
 	ack: function ()
 	{
-
+		console.log("received ack");
 	}
 });

@@ -13,6 +13,11 @@ Ext.define("observ.util.Connection",
 
 	constructor: function (object, remote, dnode)
 	{
+		console.log("connection instance");
+		console.log(remote);
+		console.log(dnode);
+
+
 		// instance of net.Socket
 		var socket = dnode.stream, me = this;
 

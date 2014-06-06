@@ -12,11 +12,17 @@ Ext.define("observ.WebClient",
 	{
 		var
 			shoe   = require("shoe"),
-			stream = shoe('/observ-connect'),
+			stream = shoe("/observ-connect"),
 			dnode  = require("dnode"),
 			d      = dnode();
 
-		d.on("remote", Ext.bind(this.onConnect, this));
+		d.on("remote", Ext.bind(this.onConnect, this, [stream], true));
 		d.pipe(stream).pipe(d);
+	},
+
+	onConnect: function (remote, dnode, stream)
+	{
+		dnode.stream = stream;
+		this.callParent([remote, dnode]);
 	}
 });
