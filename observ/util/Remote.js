@@ -4,8 +4,6 @@ Ext.define("observ.util.Remote",
 
 	constructor: function (remoteCallable, callableMethods)
 	{
-		console.log(callableMethods);
-
 		var q = require("Q");
 
 	//	console.log(q);

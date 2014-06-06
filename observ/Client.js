@@ -64,7 +64,7 @@ Ext.define("observ.Client",
 			console.log("error", e.stack);
 		}
 
-		this.instance.remote.getObject("5382c3e3bcd02d14171bd45a").then(function (object)
+		this.instance.remote.getObject("53850588814f6c0024268755").then(function (object)
 		{
 			console.log("got object", object);
 		});

@@ -122,8 +122,13 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 					try
 					{
 						c = persist.conn().collection("objects");
-						g = c.findOne({_id: this.persistence.id(id)}, function (err, doc)
+
+						g = c.findOne({_id: persist.id("53850588814f6c0024268755")}, function (err, doc)
 						{
+							console.log(err);
+							console.log("got doc");
+							console.log(doc);
+
 							objects[id] = Ext.create(doc.className, doc.data, doc._id);
 							resolve(objects[id]);
 						});
@@ -136,49 +141,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			});
 
 			return promise;
-		},
-
-		retrieve: function (connection, id, theirRemoter, clientCb)
-		{
-			var o = objects[id];
-
-			clientCb = clientCb || Ext.emptyFn;
-
-			if (!o)
-			{
-				var collection = this.persistence.conn().collection("objects");
-
-				try
-				{
-					var g = collection.findOne({_id: this.persistence.id(id)}, function (err, doc)
-					{
-						objects[id] = Ext.create(doc.className, doc.data, doc._id);
-
-						var o = objects[id];
-
-						clientCb(
-							id,
-							o.$className,
-							o.getData(),
-							theirRemoter ? o.addRemote(connection, theirRemoter) : undefined
-						);
-					});
-				}
-				catch (e)
-				{
-					console.log("error!");
-					console.log(e);
-				}
-
-				return;
-			}
-
-			clientCb(
-				id,
-				o.$className,
-				o.getData(),
-				theirRemoter ? o.addRemote(connection, theirRemoter) : undefined
-			);
 		},
 
 		getFoo: function ()

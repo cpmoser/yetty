@@ -65,9 +65,14 @@ Ext.define("observ.util.Remoter",
 	 * This call is executed by a remote beacon and passed to the callable set by this beacon's object.  Note that all
 	 * remotely callable functions must return a promise.
 	 */
-	call: function (connection, methodName, args, remoteCallback)
+	call: function (connection, methodName, remoteArgs, remoteCallback)
 	{
-		console.log("call", methodName, args);
+		// args are received as an object - this should probably be changed in the publish method
+		var args = [];
+		for (var i in remoteArgs)
+		{
+			args.push(remoteArgs[i]);
+		}
 
 		this.callable[methodName].apply(this, args).then(Ext.bind(this.onCall, this, [remoteCallback], true));
 	},
@@ -78,18 +83,43 @@ Ext.define("observ.util.Remoter",
 	onCall: function (result, remoteCallback)
 	{
 		// translate result if necessary?
-		console.log("replying to remote", result);
+
+		if (result instanceof observ.data.Model)
+		{
+			result =
+			{
+				_observ:
+				{
+					"$className": result.$className,
+					data:         result.data,
+					connector:    result.getConnector()
+				}
+			};
+		}
+
 		remoteCallback(result);
 	},
 
-	callRemote: function (connectionId, methodName, args, callback)
+	callRemote: function (connection, methodName, args, callback)
 	{
-		this.remotes[connectionId].call(methodName, args, Ext.bind(this.onCallRemote, this, [callback], 0));
+		this.remotes[connection.id].call(methodName, args, Ext.bind(this.onCallRemote, this, [connection, callback], 0));
 	},
 
-	onCallRemote: function (callback, response)
+	onCallRemote: function (connection, callback, response)
 	{
-		console.log("we got a response of " + response);
+		// check object manager cache
+
+		var o;
+
+		if (Ext.isObject(response) && Ext.isObject(response._observ))
+		{
+			o = Ext.create(response._observ.$className, response._observ.data);
+			o.connect(connection, response._observ.connector, response._observ.connector.connect);
+		}
+		else
+		{
+			o = response;
+		}
 
 		if ("function" === typeof callback)
 		{
