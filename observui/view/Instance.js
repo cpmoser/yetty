@@ -14,19 +14,6 @@ Ext.define("observui.view.Instance",
 			items:
 			[
 				{
-					fieldLabel: "Instance Name",
-					xtype:      "displayfield",
-					name:       "name",
-					itemId:     "name"
-				},
-
-				{
-					fieldLabel: "Description",
-					xtype:      "displayfield",
-					name:       "description"
-				},
-
-				{
 					fieldLabel: "Namespace",
 					xtype:      "displayfield",
 					name:       "ns"
@@ -39,13 +26,13 @@ Ext.define("observui.view.Instance",
 				},
 
 				{
-					fieldLabel: "ticks",
+					fieldLabel: "Ticks",
 					xtype:      "displayfield",
 					name:       "ticks"
 				},
 
 				{
-					fieldLabel: "heapTotal",
+					fieldLabel: "Total Memory",
 					xtype:      "displayfield",
 					name:       "heapTotal",
 
@@ -56,7 +43,7 @@ Ext.define("observui.view.Instance",
 				},
 
 				{
-					fieldLabel: "heapUsed",
+					fieldLabel: "Used Memory",
 					xtype:      "displayfield",
 					name:       "heapUsed",
 

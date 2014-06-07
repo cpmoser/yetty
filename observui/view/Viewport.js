@@ -24,7 +24,10 @@ Ext.define("observui.view.Viewport",
 					[
 						Ext.create("observui.view.Instance",
 						{
-							region: "west",
+							width: 240,
+							bodyStyle: "padding: 1em;",
+							title: "instance",
+							region: "east",
 							itemId: "instance"
 						})
 					]
@@ -54,29 +57,12 @@ Ext.define("observui.view.Viewport",
 		this.getLayout().setActiveItem(item);
 		ip.loadRecord(instance);
 
-		instance.on("remote-set", Ext.bind(ip.loadRecord, ip, [instance], false));
-		console.log(instance.get("name"));
+		instance.on("remote-set", Ext.bind(this.onInstanceUpdate, this, [ip, instance], false));
 	},
 
-	onObjectReceived: function (obj)
+	onInstanceUpdate: function (panel, instance)
 	{
-		this.setField(obj);
-
-		this.items.get(1).items.get(0).on("keyup", function (field)
-		{
-			obj.set("foo", field.getValue());
-		}, this, {buffer: 100});
-
-		obj.on("remote-set", this.setField, this);
-	},
-
-	setField: function (obj)
-	{
-		this.items.get(1).items.get(0).setValue(obj.get("foo"));
-	},
-
-	updateField: function ()
-	{
-
+		panel.loadRecord(instance);
+		panel.setTitle(instance.get("name"));
 	}
 });
