@@ -152,9 +152,9 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 					{
 						c = persist.conn().collection("objects");
 
-						g = c.findOne({_id: persist.id("53850588814f6c0024268755")}, function (err, doc)
+						g = c.findOne({_id: persist.id(id)}, function (err, doc)
 						{
-							objects[id] = Ext.create(doc.className, doc.data, doc._id);
+							objects[id] = me.vm.create(doc.className, doc.data, doc._id);
 							resolve(objects[id]);
 						});
 					}
@@ -166,6 +166,21 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			});
 
 			return promise;
+		},
+
+		getObjects: function ()
+		{
+			var me = this, promise, persist = this.persistence;
+
+			promise = require("Q").Promise(function (resolve, reject, notify)
+			{
+				var collection = persist.conn().collection("objects");
+
+				g = c.find({}, function (err, docs)
+				{
+
+				});
+			});
 		},
 
 		getObjectCacheCount: function ()
@@ -181,7 +196,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 		create: function (connection, className, data, theirRemoter, clientCb)
 		{
 			var
-				o = Ext.create(className, data),
+				o = this.vm.create(className, data),
 				c = this.persistence.conn().collection("objects"),
 
 				d =

@@ -11,6 +11,11 @@ Ext.define("observui.view.Instance",
 				labelAlign: "top"
 			},
 
+			defaults:
+			{
+				fieldStyle: "font-weight: bold; color: blue;"
+			},
+
 			items:
 			[
 				{
@@ -26,7 +31,7 @@ Ext.define("observui.view.Instance",
 				},
 
 				{
-					fieldLabel: "Ticks",
+					fieldLabel: "Time Running (seconds)",
 					xtype:      "displayfield",
 					name:       "ticks"
 				},
