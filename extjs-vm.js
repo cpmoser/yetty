@@ -4,7 +4,7 @@
  * copyright (c) 2014 Chris Moser (cpmoser@network54.com)
  */
 
-var
+ var
 	emptyFn = function () {},
 
 	cfg =
@@ -120,6 +120,8 @@ context.Ext.Loader.loadScriptFile = function (url, onLoad, onError, scope, synch
 
 	onLoad.call(scope);
 };
+
+context.Ext.process = process;
 
 module.exports = context.Ext;
 

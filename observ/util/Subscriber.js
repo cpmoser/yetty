@@ -52,9 +52,6 @@ Ext.define("observ.util.Subscriber",
 					// perhaps object instance and remoter could be obtained through a method on the connection, so that these functions
 					// could be redefined at the class level vs. instance level
 
-					console.log("calling " + method);
-					console.log(arguments);
-
 					try
 					{
 						returnValue = fn.apply(me, arguments);

@@ -6,13 +6,18 @@ Ext.define("observui.view.Instance",
 	{
 		config = Ext.apply({}, config,
 		{
-			layout: "form",
+			fieldDefaults:
+			{
+				labelAlign: "top"
+			},
+
 			items:
 			[
 				{
 					fieldLabel: "Instance Name",
-					xtype: "displayfield",
-					name:  "name"
+					xtype:      "displayfield",
+					name:       "name",
+					itemId:     "name"
 				},
 
 				{
@@ -31,6 +36,34 @@ Ext.define("observui.view.Instance",
 					fieldLabel: "Location",
 					xtype:      "displayfield",
 					name:       "location"
+				},
+
+				{
+					fieldLabel: "ticks",
+					xtype:      "displayfield",
+					name:       "ticks"
+				},
+
+				{
+					fieldLabel: "heapTotal",
+					xtype:      "displayfield",
+					name:       "heapTotal",
+
+					renderer: function (value)
+					{
+						return Math.round(value * 10 / 1024 / 1024) / 10 + " MB";
+					}
+				},
+
+				{
+					fieldLabel: "heapUsed",
+					xtype:      "displayfield",
+					name:       "heapUsed",
+
+					renderer: function (value)
+					{
+						return Math.round(value * 10 / 1024 / 1024) / 10 + " MB";
+					}
 				}
 			]
 		});

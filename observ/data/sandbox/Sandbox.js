@@ -60,6 +60,21 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			{
 				name: "foo",
 				type: "string"
+			},
+
+			{
+				name: "ticks",
+				type: "int"
+			},
+
+			{
+				name: "heapTotal",
+				type: "int"
+			},
+
+			{
+				name: "heapUsed",
+				type: "int"
 			}
 		],
 
@@ -81,22 +96,41 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			}
 		},
 
+		tick: function ()
+		{
+			var tick = this.get("ticks");
+
+			var mem = Ext.process.memoryUsage();
+
+			this.set("heapTotal", mem.heapTotal);
+			this.set("heapUsed", mem.heapUsed);
+
+			tick++;
+
+			this.set("ticks", tick);
+
+			Ext.defer(this.tick, 1000, this);
+		},
+
 		shutdown: function ()
 		{
 
 		},
 
-		constructor: function (data, persistence)
+		constructor: function (data)
 		{
 			this.callParent(arguments);
 
-			this.add(this);
+		//	this.add(this);
 
 			if (!this.vm)
 			{
 				// create a new vm and set the loader path
 			}
+		},
 
+		setPersistence: function (persistence)
+		{
 			this.persistence = persistence;
 		},
 

@@ -59,7 +59,10 @@
 			ns:          "observ",
 			location:    "https://www.observjs.com",
 			foo:         "bar"
-		}, db);
+		});
+
+		this.instance.setPersistence(db);
+		this.instance.tick();
 
 		this.instance.startup(Ext);
 

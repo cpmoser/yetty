@@ -15,15 +15,6 @@ Ext.define("observ.data.Model",
 		persist:    Ext.ClassManager.getByAlias("observ.util.Persist") || undefined
 	},
 
-	statics:
-	{
-		observ:
-		{
-			set:    true,
-			commit: true
-		}
-	},
-
 	constructor: function ()
 	{
 		this.callParent(arguments);

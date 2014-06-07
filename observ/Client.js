@@ -47,8 +47,6 @@ Ext.define("observ.Client",
 			console.log("error", e.stack);
 		}
 
-		console.log("created instance with data", data);
-
 		this.fireEvent("instance", this.instance);
 	},
 

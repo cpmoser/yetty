@@ -17,7 +17,18 @@ Ext.define("observui.view.Viewport",
 					html:   "Loading&hellip;"
 				},
 
-				Ext.create("observui.view.Instance")
+				{
+					layout: "border",
+
+					items:
+					[
+						Ext.create("observui.view.Instance",
+						{
+							region: "west",
+							itemId: "instance"
+						})
+					]
+				}
 			]
 		});
 
@@ -38,13 +49,13 @@ Ext.define("observui.view.Viewport",
 
 	onInstance: function (instance)
 	{
-		var item = this.items.get(1);
-
-		console.log(instance);
+		var item = this.items.get(1), ip = item.items.get("instance");
 
 		this.getLayout().setActiveItem(item);
-		item.updateRecord(instance);
+		ip.loadRecord(instance);
 
+		instance.on("remote-set", Ext.bind(ip.loadRecord, ip, [instance], false));
+		console.log(instance.get("name"));
 	},
 
 	onObjectReceived: function (obj)

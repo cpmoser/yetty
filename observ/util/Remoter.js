@@ -192,8 +192,6 @@ Ext.define("observ.util.Remoter",
 	{
 		Ext.iterate(this.remotes, function (remoteId, remote)
 		{
-			console.log(remote);
-
 			if (connection.id !== remoteId)
 			{
 				remote.receive(method, args);
@@ -201,7 +199,6 @@ Ext.define("observ.util.Remoter",
 			else
 			{
 				remote.ack(method);
-			//	console.log("send ack");
 			}
 		}, this);
 
@@ -221,6 +218,6 @@ Ext.define("observ.util.Remoter",
 	 */
 	ack: function ()
 	{
-		console.log("received ack");
+	//	console.log("received ack");
 	}
 });
