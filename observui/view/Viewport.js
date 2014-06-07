@@ -17,27 +17,7 @@ Ext.define("observui.view.Viewport",
 					html:   "Loading&hellip;"
 				},
 
-				{
-					border: false,
-					title: "ObservJS",
-					layout: "form",
-
-					fieldDefaults:
-					{
-						labelAlign: "top"
-					},
-
-					items:
-					[
-						{
-							xtype: "textfield",
-							value: "",
-							itemId: "foo",
-							fieldLabel: "foovalue",
-							enableKeyEvents: true
-						}
-					]
-				}
+				Ext.create("observui.view.Instance")
 			]
 		});
 
@@ -58,8 +38,13 @@ Ext.define("observui.view.Viewport",
 
 	onInstance: function (instance)
 	{
-		alert("instance received");
-		this.getLayout().setActiveItem(1);
+		var item = this.items.get(1);
+
+		console.log(instance);
+
+		this.getLayout().setActiveItem(item);
+		item.updateRecord(instance);
+
 	},
 
 	onObjectReceived: function (obj)

@@ -41,18 +41,6 @@ Ext.define("observ.util.Subscriber",
 			 * broadcast methods are called on the local object, then broadcast to the remotes, with the method run
 			 * independently on each remote (an ack message is sent back to the original publisher)
 			 */
-			/*Ext.iterate(this.observ.broadcast, function (method, value)
-			{
-				var fn = this[method];
-
-				this[method] = function ()
-				{
-					caller.apply(this, [me, method, fn, arguments]);
-				};
-
-				this.addEvents("remote-" + method);
-			}, this);*/
-
 			Ext.iterate(this.observ.broadcast, function (method, value)
 			{
 				var fn = this[method];
@@ -60,6 +48,12 @@ Ext.define("observ.util.Subscriber",
 				this[method] = function ()
 				{
 					var returnValue;
+
+					// perhaps object instance and remoter could be obtained through a method on the connection, so that these functions
+					// could be redefined at the class level vs. instance level
+
+					console.log("calling " + method);
+					console.log(arguments);
 
 					try
 					{
@@ -85,20 +79,6 @@ Ext.define("observ.util.Subscriber",
 				remoter.createCallable(methodName, this);
 			}, this);
 		}
-	},
-
-	"$call": function (me, method, fn, args)
-	{
-		try
-		{
-			fn.apply(me, args);
-		}
-		catch (e)
-		{
-			throw e;
-		}
-
-		me.publish.apply(me, [this, method, args]);
 	},
 
 	onReceive: function (connection, method, args)

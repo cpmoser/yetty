@@ -28,6 +28,16 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 		fields:
 		[
 			{
+				name: "name",
+				type: "string"
+			},
+
+			{
+				name: "description",
+				type: "string"
+			},
+
+			{
 				name: "ns",
 				type: "string"
 			},

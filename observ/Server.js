@@ -54,9 +54,11 @@
 	{
 		this.instance = Ext.create("observ.data.sandbox.Sandbox",
 		{
-			ns:       "observ",
-			location: "https://world.observjs.com",
-			foo:      "bar"
+			name:        "www.observjs.com",
+			description: "ObservJS Master Instance",
+			ns:          "observ",
+			location:    "https://www.observjs.com",
+			foo:         "bar"
 		}, db);
 
 		this.instance.startup(Ext);
