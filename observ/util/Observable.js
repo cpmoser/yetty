@@ -2,7 +2,7 @@
  * copyright (c) 2014 Chris Moser (cpmoser@network54.com)
  */
 
-Ext.define("observ.util.Subscriber",
+Ext.define("observ.util.Observable",
 {
 	extend: "Ext.util.Observable",
 
@@ -18,7 +18,7 @@ Ext.define("observ.util.Subscriber",
 	{
 		this.callParent();
 
-		var remoter = Ext.create("observ.util.Remoter");
+		var remoter = Ext.create("observ.util.Beacon");
 
 		remoter.on("receive", this.onReceive, this);
 

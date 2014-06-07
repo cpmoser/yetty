@@ -2,7 +2,7 @@
  * copyright (c) 2014 Chris Moser (cpmoser@network54.com)
  */
 
-Ext.define("observ.util.Remoter",
+Ext.define("observ.util.Beacon",
 {
 	extend: "Ext.Base",
 

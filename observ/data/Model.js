@@ -11,7 +11,7 @@ Ext.define("observ.data.Model",
 		/**
 		 * defaults to the subscriber mixin *unless* the observ.util.Observable alias is defined (e.g. as a Publisher)
 		 */
-		observable: Ext.ClassManager.getByAlias("observ.util.Observable") || "observ.util.Subscriber",
+		observable: "observ.util.Observable",
 		persist:    Ext.ClassManager.getByAlias("observ.util.Persist") || undefined
 	},
 

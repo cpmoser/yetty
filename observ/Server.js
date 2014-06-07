@@ -11,22 +11,9 @@
  {
 	extend: "Ext.data.Model",
 
-	mixins:
-	{
-		observable: "observ.util.Publisher"
-	},
-
 	constructor: function (port, httpPort)
 	{
 		this.callParent(arguments);
-
-		/**
-		 * the observ.data.Model class defaults to observ.util.observable.Subscriber as its observable mixin unless
-		 * we set the alias for observ.util.Observable.
-		 *
-		 * this needs to happen before any observ.data.Model classes are instantiated
-		 */
-		Ext.ClassManager.setAlias("observ.util.Publisher", "observ.util.Observable");
 
 		this.addEvents(
 			"start",
