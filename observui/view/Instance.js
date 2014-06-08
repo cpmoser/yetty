@@ -37,6 +37,12 @@ Ext.define("observui.view.Instance",
 				},
 
 				{
+					fieldLabel: "CPU",
+					xtype:      "displayfield",
+					name:       "cpu"
+				},
+
+				{
 					fieldLabel: "Total Memory",
 					xtype:      "displayfield",
 					name:       "heapTotal",

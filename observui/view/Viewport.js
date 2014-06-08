@@ -58,6 +58,12 @@ Ext.define("observui.view.Viewport",
 		ip.loadRecord(instance);
 
 		instance.on("remote-set", Ext.bind(this.onInstanceUpdate, this, [ip, instance], false));
+
+		instance.remote.getObjects().then(function (objects)
+		{
+			console.log("we received these objects");
+			console.log(objects);
+		});
 	},
 
 	onInstanceUpdate: function (panel, instance)

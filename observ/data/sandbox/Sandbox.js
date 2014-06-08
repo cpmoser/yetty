@@ -19,6 +19,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			callable:
 			{
 				getObject: true,
+				getObjects: true,
 				getObjectCacheCount: true
 			}
 		},
@@ -75,6 +76,11 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			{
 				name: "heapUsed",
 				type: "int"
+			},
+
+			{
+				name: "cpu",
+				type: "float"
 			}
 		],
 
@@ -98,12 +104,19 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 		tick: function ()
 		{
-			var tick = this.get("ticks");
+			var tick = this.get("ticks"), me = this;
 
 			var mem = Ext.process.memoryUsage();
 
 			this.set("heapTotal", mem.heapTotal);
 			this.set("heapUsed", mem.heapUsed);
+
+			var pid = Ext.process.pid, usage = require("usage");
+
+			usage.lookup(pid, function (err, result)
+			{
+				me.set("cpu", result.cpu);
+			});
 
 			tick++;
 
@@ -174,13 +187,29 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 			promise = require("Q").Promise(function (resolve, reject, notify)
 			{
+				console.log("executing the promise");
+
 				var collection = persist.conn().collection("objects");
 
-				g = c.find({}, function (err, docs)
+				try
 				{
-
-				});
+					g = collection.find({}, function (err, docs)
+					{
+						docs.toArray(function (a)
+						{
+							console.log(a);
+							resolve(a);
+						});
+					});
+				}
+				catch (e)
+				{
+					console.log(e.message);
+					console.log(e.stack);
+				}
 			});
+
+			return promise;
 		},
 
 		getObjectCacheCount: function ()
