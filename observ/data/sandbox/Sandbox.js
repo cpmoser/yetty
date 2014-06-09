@@ -18,6 +18,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 			callable:
 			{
+				createObject: true,
 				getObject: true,
 				getObjects: true,
 				getObjectCacheCount: true
@@ -193,9 +194,9 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 				try
 				{
-					g = collection.find({}, function (err, docs)
+					g = collection.find({}, {className: 1}, function (err, docs)
 					{
-						docs.toArray(function (a)
+						docs.toArray(function (err, a)
 						{
 							console.log(a);
 							resolve(a);
@@ -220,6 +221,52 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			});
 
 			return promise;
+		},
+
+		createObject: function (className, data)
+		{
+			try
+			{
+				var
+					me = this,
+					promise = require("Q").Promise(function (resolve, reject, notify)
+					{
+						console.log("inside promise");
+
+						try
+						{
+							var
+								o = me.vm.create(className, data),
+								c = me.persistence.conn().collection("objects"),
+
+								d =
+								{
+									className: o.$className,
+									data:      o.getData()
+								};
+
+							c.insert(d, {}, function (err, records)
+							{
+								console.log(err);
+
+								o.setId(records[0]._id);
+								o.commit();
+
+								resolve(o);
+							});
+						}
+						catch (e)
+						{
+							reject(e);
+						}
+					});
+
+				return promise;
+			}
+			catch (e)
+			{
+				console.log(e.message);
+			}
 		},
 
 		create: function (connection, className, data, theirRemoter, clientCb)

@@ -24,11 +24,62 @@ Ext.define("observui.view.Viewport",
 					[
 						Ext.create("observui.view.Instance",
 						{
+							tbar:
+							[
+								'->',
+								{
+									text: "Create",
+									handler: this.createObject,
+									scope:   this
+								}
+							],
+
 							width: 240,
 							bodyStyle: "padding: 1em;",
 							title: "instance",
-							region: "east",
+							region: "west",
 							itemId: "instance"
+						}),
+
+						Ext.create("Ext.grid.Panel",
+						{
+							itemId: "objectsGrid",
+							region: "center",
+							title: "objects",
+
+							store: Ext.create("Ext.data.Store",
+							{
+								fields: ["_id", "className"],
+
+								data: [],
+
+								proxy:
+								{
+									type: "memory",
+									reader:
+									{
+										type: "json",
+										root: "data"
+									}
+								}
+							}),
+
+							columns:
+							[
+								{
+									name:      "ID",
+									dataIndex: "_id",
+									header:    "Object ID",
+									width: 240
+								},
+
+								{
+									name: "Class Name",
+									dataIndex: "className",
+									header:    "Class Name",
+									flex: 1
+								}
+							]
 						})
 					]
 				}
@@ -52,6 +103,8 @@ Ext.define("observui.view.Viewport",
 
 	onInstance: function (instance)
 	{
+		this.instance = instance;
+
 		var item = this.items.get(1), ip = item.items.get("instance");
 
 		this.getLayout().setActiveItem(item);
@@ -61,14 +114,27 @@ Ext.define("observui.view.Viewport",
 
 		instance.remote.getObjects().then(function (objects)
 		{
-			console.log("we received these objects");
+			var grid = this.items.get(1).items.get("objectsGrid");
+			console.log("grid should load data");
 			console.log(objects);
-		});
+
+			grid.getStore().loadData(objects);
+		}.bind(this));
 	},
 
 	onInstanceUpdate: function (panel, instance)
 	{
 		panel.loadRecord(instance);
 		panel.setTitle(instance.get("name"));
+	},
+
+	createObject: function ()
+	{
+		this.instance.remote.createObject("observ.data.Test", {}).then(function (object)
+		{
+			console.log("we got the object ", object);
+		});
+
+		console.log("ran CO");
 	}
 });
