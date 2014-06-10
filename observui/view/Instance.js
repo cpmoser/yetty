@@ -39,7 +39,16 @@ Ext.define("observui.view.Instance",
 				{
 					fieldLabel: "CPU",
 					xtype:      "displayfield",
-					name:       "cpu"
+					name:       "cpu",
+					renderer: function (value)
+					{
+						if (value.valueOf() === "-1")
+						{
+							return "N/A on Windows";
+						}
+
+						return value;
+					}
 				},
 
 				{
@@ -51,6 +60,12 @@ Ext.define("observui.view.Instance",
 					{
 						return Math.round(value * 10 / 1024 / 1024) / 10 + " MB";
 					}
+				},
+
+				{
+					fieldLabel: "objectCount",
+					xtype:      "displayfield",
+					name:       "objectCount"
 				},
 
 				{

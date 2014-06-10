@@ -164,7 +164,7 @@ Ext.define("observui.view.Viewport",
 
 	createObject: function ()
 	{
-		this.instance.remote.createObject("observ.data.Test", {}).then(function (object)
+		this.instance.remote.createObject("observ.data.sandbox.Sandbox", {ns: "someotherns", location: "https://some.other.ns"}).then(function (object)
 		{
 			console.log("we got the object ", object);
 		});
@@ -194,8 +194,6 @@ Ext.define("observui.view.Viewport",
 
 			this.instance.remote.getObject(id).then(function (object)
 			{
-				object.remote.alter();
-
 				try
 				{
 					var item = Ext.create("observui.view.data.Model", {}, object);

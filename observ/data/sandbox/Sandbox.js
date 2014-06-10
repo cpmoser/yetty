@@ -55,6 +55,11 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			},
 
 			{
+				name: "objectCount",
+				type: "int"
+			},
+
+			{
 				name: "cacheCount",
 				type: "int"
 			},
@@ -105,8 +110,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 		tick: function ()
 		{
-			return;
-
 			var tick = this.get("ticks"), me = this;
 
 			var mem = Ext.process.memoryUsage();
@@ -120,6 +123,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			{
 				if (err)
 				{
+					me.set("cpu", -1);
 					return;
 				}
 
@@ -142,21 +146,12 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 		{
 			this.callParent(arguments);
 
-			try
-			{
-				this.vm = require("extjs-vm");
-			}
-			catch (e)
-			{
-				this.vm = Ext;
-			}
+			this.addEvents("beforecreate", "create", "instantiate", "beforeinstantiate");
+		},
 
-		//	this.add(this);
-
-			if (!this.vm)
-			{
-				// create a new vm and set the loader path
-			}
+		setVm: function (vm)
+		{
+			this.vm = vm;
 		},
 
 		setPersistence: function (persistence)
@@ -184,7 +179,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 						g = c.findOne({_id: persist.id(id)}, function (err, doc)
 						{
-							objects[id] = me.vm.create(doc.className, doc.data, doc._id);
+							var object = me.instantiate(doc.className, doc.data, doc._id);
 							resolve(objects[id]);
 						});
 					}
@@ -227,6 +222,26 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			return promise;
 		},
 
+		getObjectCount: function ()
+		{
+			var promise = require("Q").Promise(function (resolve, reject, notify)
+			{
+				var c = this.persistence.conn().collection("objects");
+
+				c.count(function (err, count)
+				{
+					if (err)
+					{
+						reject(err);
+					}
+
+					resolve(count);
+				});
+			}.bind(this));
+
+			return promise;
+		},
+
 		getObjectCacheCount: function ()
 		{
 			var promise = require("Q").Promise(function (resolve, reject, notify)
@@ -237,6 +252,21 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			return promise;
 		},
 
+		instantiate: function (className, data, id)
+		{
+			this.fireEvent("beforeinstantiate", this, className, data, id);
+
+			console.log("about to instantiate " + className);
+			var object = this.vm.create(className, data, id);
+			console.log("instantiation worked");
+
+			this.fireEvent("instantiate", this, object);
+
+			objects[object.getId()] = object;
+
+			return object;
+		},
+
 		createObject: function (className, data)
 		{
 			try
@@ -245,12 +275,10 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 					me = this,
 					promise = require("Q").Promise(function (resolve, reject, notify)
 					{
-						console.log("inside promise");
-
 						try
 						{
 							var
-								o = me.vm.create(className, data),
+								o = me.instantiate(className, data),
 								c = me.persistence.conn().collection("objects"),
 
 								d =
@@ -261,11 +289,10 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 							c.insert(d, {}, function (err, records)
 							{
-								console.log(err);
-
 								o.setId(records[0]._id);
 								o.commit();
 
+								me.set("objectCount", me.get("objectCount") + 1);
 								resolve(o);
 							});
 						}

@@ -15,6 +15,8 @@
 	{
 		this.callParent(arguments);
 
+		this.log = require("util").log;
+
 		this.addEvents(
 			"start",
 			"stop",
@@ -37,6 +39,16 @@
 		persist.connect(null, this.createInstance, this);
 	},
 
+	onInstantiate: function (sandbox, object)
+	{
+		if (object.$className === "observ.data.sandbox.Sandbox")
+		{
+			// when our own instance has instantiated another instance, we can set the VM to a new sandboxed environment here
+			// you can change require("extjs-vm") to Ext to have multiple instances running in the same node process
+			object.startup(require("extjs-vm"));
+		}
+	},
+
 	createInstance: function (db)
 	{
 		this.instance = Ext.create("observ.data.sandbox.Sandbox",
@@ -45,26 +57,30 @@
 			description: "ObservJS Master Instance",
 			ns:          "observ",
 			location:    "https://www.observjs.com",
-			foo:         "bar"
+			foo:         "bar",
+			cacheCount:  0,
+			objectCount: 0
 		});
 
+		this.instance.on("instantiate", this.onInstantiate, this);
+
 		this.instance.setPersistence(db);
-		this.instance.tick();
 
-		this.instance.startup(Ext);
+		this.instance.getObjectCount().then(function (count)
+		{
+			this.log("observ.Server Object count received (" + count + ")");
 
-		// create a test object for this sandbox
-		//var test = this.instance.create(this, "observ.data.Test", {foo: "bar"});
+			this.instance.set("objectCount", count);
+			this.instance.startup(Ext);
+			this.instance.tick();
 
-		//test.alter();
+			this.log("observ.Server Instance ready for namespace " + this.instance.get("ns"));
 
-//		this.instance.add(test);
-
-//		this.instance.add(Ext.create("observ.data.Test", {foo: "bar"}));
-
-		this.fireEvent("ready", this);
-
-//		this.instance.get(2);
+			this.fireEvent("ready", this);
+		}.bind(this), function (err)
+		{
+			console.log("some error occurred", err);
+		});
 	},
 
 	listen: function (port, httpPort)
@@ -96,25 +112,22 @@
 
 			wd.on("error", function (error)
 			{
-				console.log("error on client");
-				console.log(error.stack);
-			});
+				this.log("observ.Server Dnode client error (" + error + ")");
+			}.bind(this));
 
-			wd.on("fail", function ()
+			wd.on("fail", function (error)
 			{
-				console.log("fail on client");
-			});
-		//	var d = dnode(Ext.bind(Ext.create, Ext, ["observ.data.sandbox.Connection", i], 0));
+				this.log("observ.Server Dnode client failure (" + error + ")");
+			}.bind(this));
 
-		//	var
-		//		c = Ext.bind(Ext.create, Ext, ["observ.util.Connection"], i], 0),
-		//		d = dnode(c);
 			wd.stream = stream;
 
 			wd.pipe(stream).pipe(wd);
 		});
 
 		sock.install(httpServer, "/observ-connect");
+
+		this.log("observ.Server Listening for client connections on " + port + ", http connections on " + httpPort);
 
 		return this;
 	}
