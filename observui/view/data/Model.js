@@ -7,7 +7,6 @@ Ext.define("observui.view.data.Model",
 	constructor: function (config, model)
 	{
 		var items = [];
-		this.model = model;
 
 		var targetClass = Ext.ClassManager.getClass(model);
 
@@ -23,10 +22,7 @@ Ext.define("observui.view.data.Model",
 
 		this.callParent([config]);
 
-		this.on("render", function ()
-		{
-			this.setTheModel(model);
-		}, this);
+		this.on("render", Ext.bind(this.setModel, this, [model], 0));
 	},
 
 	onClassLoaded: function ()
@@ -53,8 +49,7 @@ Ext.define("observui.view.data.Model",
 				xtype: "displayfield",
 				fieldLabel: field.name,
 				name:  field.name,
-				itemId: field.name,
-				value: model.get(field.name)
+				itemId: field.name
 			};
 		}
 	},
@@ -65,16 +60,14 @@ Ext.define("observui.view.data.Model",
 			xtype: "textfield",
 			name:  field.name,
 			fieldLabel: field.name,
-			itemId: field.name,
-			value:  model.get(field.name)
+			itemId: field.name
 		};
 	},
 
-	setTheModel: function (model)
+	setModel: function (model)
 	{
-		model.on("remote-set", function ()
-		{
-			console.log("the model changed");
-		});
+		this.loadRecord(model);
+
+		model.on("remote-set", this.loadRecord, this);
 	}
 });

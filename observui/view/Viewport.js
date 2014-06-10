@@ -194,12 +194,7 @@ Ext.define("observui.view.Viewport",
 
 			this.instance.remote.getObject(id).then(function (object)
 			{
-				console.log("received", object);
-
-				object.alter().then(function (result)
-				{
-					console.log("initiated alter", result);
-				});
+				object.remote.alter();
 
 				try
 				{

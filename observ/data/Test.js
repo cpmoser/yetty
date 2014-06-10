@@ -37,17 +37,13 @@ Ext.define("observ.data.Test",
 		var promise = require("Q").Promise(function (resolve, reject)
 		{
 			var foo = Math.random().toString(36).replace(/[^a-z]+/g, '');
-
 			this.set("foo", foo);
 			this.commit();
 
-			if (!this.get("isAltering"))
-			{
-				this.set("isAltering", true);
-				setTimeout(Ext.bind(this.alter, this), 3000);
-			}
+			this.alterTask.delay(3000);
 
 			resolve(true);
+
 		}.bind(this));
 
 		return promise;
@@ -56,6 +52,7 @@ Ext.define("observ.data.Test",
 	constructor: function ()
 	{
 		this.callParent(arguments);
-	//	this.alter();
+
+		this.alterTask = Ext.create("Ext.util.DelayedTask", this.alter, this);
 	}
 });

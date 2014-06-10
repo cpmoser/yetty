@@ -105,6 +105,8 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 		tick: function ()
 		{
+			return;
+
 			var tick = this.get("ticks"), me = this;
 
 			var mem = Ext.process.memoryUsage();
