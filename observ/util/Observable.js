@@ -80,6 +80,8 @@ Ext.define("observ.util.Observable",
 
 	onReceive: function (connection, method, args)
 	{
+		console.log(method, args);
+
 		// args are received as an object - this should probably be changed in the publish method
 		var a = [];
 		for (var i in args)

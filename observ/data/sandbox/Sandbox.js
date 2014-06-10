@@ -116,6 +116,11 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 			usage.lookup(pid, function (err, result)
 			{
+				if (err)
+				{
+					return;
+				}
+
 				me.set("cpu", result.cpu);
 			});
 
@@ -134,6 +139,15 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 		constructor: function (data)
 		{
 			this.callParent(arguments);
+
+			try
+			{
+				this.vm = require("extjs-vm");
+			}
+			catch (e)
+			{
+				this.vm = Ext;
+			}
 
 		//	this.add(this);
 
@@ -182,19 +196,17 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 			return promise;
 		},
 
-		getObjects: function ()
+		getObjects: function (className)
 		{
 			var me = this, promise, persist = this.persistence;
 
 			promise = require("Q").Promise(function (resolve, reject, notify)
 			{
-				console.log("executing the promise");
-
-				var collection = persist.conn().collection("objects");
+				var collection = persist.conn().collection("objects"), filter = className ? {className: className} : {};
 
 				try
 				{
-					g = collection.find({}, {className: 1}, function (err, docs)
+					collection.find(filter, {className: 1}, function (err, docs)
 					{
 						docs.toArray(function (err, a)
 						{

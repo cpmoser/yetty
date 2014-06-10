@@ -23,5 +23,11 @@ Ext.define("observ.data.Model",
 		{
 			this.mixins.persist.constructor.call(this, arguments);
 		}
+	},
+
+	destroy: function ()
+	{
+		alert("Destroy");
+		this.callParent();
 	}
 });

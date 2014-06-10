@@ -93,6 +93,17 @@
 			var
 				wc = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0),
 				wd = dnode(wc);
+
+			wd.on("error", function (error)
+			{
+				console.log("error on client");
+				console.log(error.stack);
+			});
+
+			wd.on("fail", function ()
+			{
+				console.log("fail on client");
+			});
 		//	var d = dnode(Ext.bind(Ext.create, Ext, ["observ.data.sandbox.Connection", i], 0));
 
 		//	var

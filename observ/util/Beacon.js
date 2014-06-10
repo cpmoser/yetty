@@ -78,7 +78,7 @@ Ext.define("observ.util.Beacon",
 			args.push(remoteArgs[i]);
 		}
 
-		this.callable[methodName].apply(this, args).then(Ext.bind(this.onCall, this, [remoteCallback], true));
+		this.callable[methodName].apply(this, args).then(Ext.bind(this.onCall, this, [connection, remoteCallback], true));
 	},
 
 	/**
@@ -103,7 +103,7 @@ Ext.define("observ.util.Beacon",
 	/**
 	 * Passes back the result of a local call to remote callback
 	 */
-	onCall: function (result, remoteCallback)
+	onCall: function (result, connection, remoteCallback)
 	{
 		// translate result if necessary?
 
@@ -115,7 +115,7 @@ Ext.define("observ.util.Beacon",
 				{
 					"$className": result.$className,
 					data:         result.data,
-					connector:    result.getConnector()
+					connector:    result.getConnector(connection)
 				}
 			};
 		}

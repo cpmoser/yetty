@@ -45,7 +45,29 @@ Ext.define("observui.view.Viewport",
 						{
 							itemId: "objectsGrid",
 							region: "center",
-							title: "objects",
+							title:  "objects",
+
+							tbar:
+							[
+								{
+									fieldLabel: "Class",
+									xtype: "textfield",
+									enableKeyEvents: true,
+
+									listeners:
+									{
+										keypress: function (field, e)
+										{
+											if (e.getCharCode() === e.RETURN)
+											{
+												this.getObjects(field.getValue());
+											}
+										},
+
+										scope: this
+									}
+								}
+							],
 
 							store: Ext.create("Ext.data.Store",
 							{
@@ -74,12 +96,18 @@ Ext.define("observui.view.Viewport",
 								},
 
 								{
-									name: "Class Name",
+									name:      "Class Name",
 									dataIndex: "className",
 									header:    "Class Name",
-									flex: 1
+									flex:      1
 								}
-							]
+							],
+
+							listeners:
+							{
+								itemdblclick: this.inspectModel,
+								scope: this
+							}
 						})
 					]
 				}
@@ -112,14 +140,20 @@ Ext.define("observui.view.Viewport",
 
 		instance.on("remote-set", Ext.bind(this.onInstanceUpdate, this, [ip, instance], false));
 
-		instance.remote.getObjects().then(function (objects)
-		{
-			var grid = this.items.get(1).items.get("objectsGrid");
-			console.log("grid should load data");
-			console.log(objects);
+		this.getObjects();
+	},
 
+	getObjects: function (value)
+	{
+		var grid = this.items.get(1).items.get("objectsGrid");
+
+		grid.getEl().mask("Loading&hellip;");
+
+		this.instance.remote.getObjects(value).then(function (objects)
+		{
 			grid.getStore().loadData(objects);
-		}.bind(this));
+			grid.getEl().unmask();
+		});
 	},
 
 	onInstanceUpdate: function (panel, instance)
@@ -136,5 +170,50 @@ Ext.define("observui.view.Viewport",
 		});
 
 		console.log("ran CO");
+	},
+
+	inspectModel: function (grid, record)
+	{
+		var className = record.get("className"), id = record.get("_id");
+
+		var win = new Ext.Window(
+		{
+			title: "Inspector",
+			layout: "fit",
+			width: 400,
+			height: 240,
+
+			items:
+			[
+			]
+		});
+
+		win.on("render", function ()
+		{
+			win.getEl().mask("Loading&hellip;");
+
+			this.instance.remote.getObject(id).then(function (object)
+			{
+				console.log("received", object);
+
+				object.alter().then(function (result)
+				{
+					console.log("initiated alter", result);
+				});
+
+				try
+				{
+					var item = Ext.create("observui.view.data.Model", {}, object);
+					win.add(item);
+				}
+				catch (e)
+				{
+					console.log(e);
+				}
+				win.getEl().unmask();
+			});
+		}, this);
+
+		win.show();
 	}
 });
