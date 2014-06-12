@@ -207,7 +207,6 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 					{
 						docs.toArray(function (err, a)
 						{
-							console.log(a);
 							resolve(a);
 						});
 					});

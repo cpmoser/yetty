@@ -45,12 +45,14 @@
 		{
 			// when our own instance has instantiated another instance, we can set the VM to a new sandboxed environment here
 			// you can change require("extjs-vm") to Ext to have multiple instances running in the same node process
-			object.startup(require("extjs-vm"));
+			object.startup(require("./extjs-vm"));
 		}
 	},
 
 	createInstance: function (db)
 	{
+		this.log("observ.Server Persistence connected");
+
 		this.instance = Ext.create("observ.data.sandbox.Sandbox",
 		{
 			name:        "www.observjs.com",
@@ -106,6 +108,9 @@
 
 		var sock = shoe(function (stream)
 		{
+			console.log(stream.constructor.name);
+			console.log(stream);
+
 			var
 				wc = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0),
 				wd = dnode(wc);

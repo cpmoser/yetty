@@ -41,7 +41,7 @@ Ext.define("observ.util.persist.Mongo",
 
 			};
 
-			client.connect('mongodb://127.0.0.1:27017/observ', Ext.bind(onConnect, this));
+			client.connect('mongodb://127.0.0.1:27017/observ', onConnect.bind(this));
 		}
 	},
 

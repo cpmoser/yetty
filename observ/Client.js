@@ -17,11 +17,16 @@ Ext.define("observ.Client",
 		this.addEvents("connect", "instance");
 	},
 
-	connect: function ()
+	connect: function (address)
 	{
 		var
 			dnode      = require('dnode'),
 			connection = dnode.connect(5050, Ext.bind(this.onConnect, this));
+	},
+
+	instance: function (name)
+	{
+
 	},
 
 	onConnect: function (remote, dnode)
