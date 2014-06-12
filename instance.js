@@ -1,6 +1,5 @@
 var extjs = require("./extjs-vm");
 
-process.on("message", function ()
-{
-	console.log("received message");
-});
+var instance = extjs.create("observ.data.sandbox.Sandbox", process.env.instance).startup(extjs);
+
+console.log("we have our instance", instance);

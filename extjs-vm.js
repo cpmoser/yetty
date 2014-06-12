@@ -96,10 +96,10 @@ extJsFile = "src/Ext.js";
 vm.runInContext(code, context, extJsFile);
 
 var
-	Ext  = context.Ext,
-	util = require("util");
+	extjs = context.Ext,
+	util  = require("util");
 
-Ext.Loader.setPath("Ext", extJsPath + "src");
+extjs.Loader.setPath("Ext", extJsPath + "src");
 
 context.Ext.Loader.loadScriptFile = function (url, onLoad, onError, scope, synchronous)
 {

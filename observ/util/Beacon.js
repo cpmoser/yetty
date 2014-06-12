@@ -107,7 +107,11 @@ Ext.define("observ.util.Beacon",
 	{
 		// translate result if necessary?
 
-		if (result instanceof observ.data.Model)
+		if (result instanceof observ.data.sandbox.Sandbox)
+		{
+			// issue reconnect command
+		}
+		else if (result instanceof observ.data.Model)
 		{
 			result =
 			{

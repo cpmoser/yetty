@@ -74,7 +74,7 @@
 
 			this.instance.set("objectCount", count);
 			this.instance.startup(Ext);
-			this.instance.tick();
+//			this.instance.tick();
 
 			this.log("observ.Server Instance ready for namespace " + this.instance.get("ns"));
 
@@ -106,14 +106,8 @@
 
 		httpServer.listen(httpPort);
 
-		var child = require("child_process").fork("./instance");
-
-
-
 		var sock = shoe(function (stream)
 		{
-			child.send("test", stream);
-
 			var
 				wc = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0),
 				wd = dnode(wc);
@@ -132,8 +126,6 @@
 
 			wd.pipe(stream).pipe(wd);
 		});
-
-//		child.send("test", sock);
 
 		sock.install(httpServer, "/observ-connect");
 

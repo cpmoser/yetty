@@ -3,7 +3,7 @@
  */
 
 
-Ext.define("observ.data.sandbox.Sandbox", function ()
+Ext.define("observ.data.instance.Instance", function ()
 {
 	var objects = {}, counter = 1;
 

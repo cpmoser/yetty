@@ -24,11 +24,6 @@ Ext.define("observ.Client",
 			connection = dnode.connect(5050, Ext.bind(this.onConnect, this));
 	},
 
-	instance: function (name)
-	{
-
-	},
-
 	onConnect: function (remote, dnode)
 	{
 		var connection = Ext.create("observ.util.Connection", this, remote, dnode);

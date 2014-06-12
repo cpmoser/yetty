@@ -4,6 +4,23 @@
 
 Ext.define("observ.util.Connection",
 {
+	statics:
+	{
+		connect: function (location)
+		{
+			var
+				dnode      = require('dnode'),
+				connection = dnode.connect(location, function (remote, dnode)
+				{
+					var connection = Ext.create("observ.util.Connection", this, remote, dnode);
+					this.connection = connection;
+					remote.instance(Ext.bind(this.onInstance, this));
+
+					return;
+				});
+		}
+	},
+
 	extend: "Ext.Base",
 
 	mixins:

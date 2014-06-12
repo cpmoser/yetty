@@ -1,6 +1,6 @@
 Ext.define("observ.util.persist.Mongo",
 {
-	extend: "Ext.Base",
+	extend: "observ.util.persist.Persist",
 
 	inheritableStatics:
 	{
