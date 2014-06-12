@@ -106,10 +106,13 @@
 
 		httpServer.listen(httpPort);
 
+		var child = require("child_process").fork("./instance");
+
+
+
 		var sock = shoe(function (stream)
 		{
-			console.log(stream.constructor.name);
-			console.log(stream);
+			child.send("test", stream);
 
 			var
 				wc = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0),
@@ -130,7 +133,15 @@
 			wd.pipe(stream).pipe(wd);
 		});
 
+//		child.send("test", sock);
+
 		sock.install(httpServer, "/observ-connect");
+
+		sock.on("connection", function (conn)
+		{
+			console.log("conn received");
+			console.log(conn);
+		});
 
 		this.log("observ.Server Listening for client connections on " + port + ", http connections on " + httpPort);
 
