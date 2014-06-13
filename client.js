@@ -4,7 +4,7 @@ var
 	extjs  = require("./extjs-vm"),
 	client = extjs.create("observ.Client");
 
-client.connect();
+client.connect(5050);
 
 /*try
 {

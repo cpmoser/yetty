@@ -7,6 +7,11 @@ Ext.define("observ.Client",
 {
 	extend: "Ext.data.Model",
 
+	requires:
+	[
+		"observ.util.Connection"
+	],
+
 	constructor: function (config)
 	{
 		this.callParent(arguments);
@@ -17,7 +22,17 @@ Ext.define("observ.Client",
 		this.addEvents("connect", "instance");
 	},
 
-	connect: function (address)
+	connect: function (location)
+	{
+		var promise = require("Q").Promise(function (resolve, reject, notify)
+		{
+			Ext.ClassManager.get("observ.util.Connection").connect(location); // .then -> resolve with the new connection or instance
+		});
+
+		return promise;
+	},
+
+	connectOld: function (address)
 	{
 		var
 			dnode      = require('dnode'),

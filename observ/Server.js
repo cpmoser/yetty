@@ -11,6 +11,11 @@
  {
 	extend: "Ext.data.Model",
 
+	requires:
+	[
+		"observ.util.Connection"
+	],
+
 	constructor: function (port, httpPort)
 	{
 		this.callParent(arguments);
@@ -85,14 +90,29 @@
 		});
 	},
 
+	getInstance: function (connection, remoteCallback)
+	{
+		console.log("where is the connection?");
+		console.log(connection);
+
+		remoteCallback(this.instance.$className, this.instance.data, this.instance.getConnector(connection));
+	},
+
 	listen: function (port, httpPort)
 	{
 		var
-			dnode = require('dnode'),
-			net   = require('net'),
-			i     = this.instance,
-			c     = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0),
-			d     = dnode(c),
+			// these are the available remote methods on the client when the connection is established
+			protocol =
+			{
+				instance: this.getInstance.bind(this)
+			},
+
+			dnode = require("dnode"),
+
+			c = Ext.ClassManager.get("observ.util.Connection"),
+			i = this.instance,
+			d = dnode(c.create.bind(c, protocol)),
+
 			server;
 
 		server = d.listen(port);
@@ -109,7 +129,7 @@
 		var sock = shoe(function (stream)
 		{
 			var
-				wc = Ext.bind(Ext.create, Ext, ["observ.util.Connection", i], 0),
+				wc = Ext.bind(Ext.create, Ext, ["observ.util.Connection"], 0),
 				wd = dnode(wc);
 
 			wd.on("error", function (error)

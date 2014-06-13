@@ -8,16 +8,10 @@ Ext.define("observ.util.Connection",
 	{
 		connect: function (location)
 		{
-			var
-				dnode      = require('dnode'),
-				connection = dnode.connect(location, function (remote, dnode)
-				{
-					var connection = Ext.create("observ.util.Connection", this, remote, dnode);
-					this.connection = connection;
-					remote.instance(Ext.bind(this.onInstance, this));
-
-					return;
-				});
+			// protocol is the second argument
+			// for clients, this may include things like "requestAuthorization", "ping", etc
+			// those can be throttled to prevent servers from doing not so nice things...
+			require("dnode")(this.create.bind(this, {})).connect(location);
 		}
 	},
 
@@ -28,31 +22,33 @@ Ext.define("observ.util.Connection",
 		observable: "Ext.util.Observable"
 	},
 
-	constructor: function (object, remote, dnode)
+	constructor: function (protocol, noRemote, dnode)
 	{
+		this.callParent();
+
 		// instance of net.Socket
 		var socket = dnode.stream, me = this;
 
-		this.id = socket.remoteAddress + ":" + socket.remotePort;
-
-		this.callParent(arguments);
-		this.mixins.observable.constructor.call(this);
-
-		this.addEvents("beforedestroy", "destroy");
-
-		this.initHandlers(dnode);
-
-		this.instance = function (remoteCallback)
+		Ext.iterate(protocol, function (key, value)
 		{
-			try
-			{
-				remoteCallback(object.$className, object.data, object.getConnector(me));
-			}
-			catch (e)
-			{
-				console.log("error", e);
-			}
-		};
+			this[key] = Ext.bind(value, value, [this], 0);
+		}, this);
+
+		dnode.on("remote", function (remote)
+		{
+			// add in remote stuff here
+			console.log(remote);
+
+			// call this afterwards, otherwise it's sent back to the remote
+			this.mixins.observable.constructor.call(this);
+
+			this.id = socket.remoteAddress + ":" + socket.remotePort;
+			this.addEvents("beforedestroy", "destroy");
+			this.initHandlers(dnode);
+
+			this.remote = remote;
+
+		}.bind(this));
 	},
 
 	initHandlers: function (dnode)
@@ -67,7 +63,6 @@ Ext.define("observ.util.Connection",
 	destroy: function ()
 	{
 		this.fireEvent("destroy", this);
-
 		this.callParent(arguments);
 	}
 });
