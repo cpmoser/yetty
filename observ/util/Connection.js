@@ -9,7 +9,7 @@ Ext.define("observ.util.Connection",
 		connect: function (location)
 		{
 			// protocol is the second argument
-			// for clients, this may include things like "requestAuthorization", "ping", etc
+			// for clients, this may include things like "requestAuthorization", "ping", "handoff" (pass request to another instance) etc
 			// those can be throttled to prevent servers from doing not so nice things...
 			require("dnode")(this.create.bind(this, {})).connect(location);
 		}
