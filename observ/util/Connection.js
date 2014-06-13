@@ -8,10 +8,21 @@ Ext.define("observ.util.Connection",
 	{
 		connect: function (location)
 		{
-			// protocol is the second argument
-			// for clients, this may include things like "requestAuthorization", "ping", "handoff" (pass request to another instance) etc
-			// those can be throttled to prevent servers from doing not so nice things...
-			require("dnode")(this.create.bind(this, {})).connect(location);
+			return require("Q").Promise(function (resolve, reject, notify)
+			{
+				// protocol is the second argument
+				// for clients, this may include things like "requestAuthorization", "ping", "handoff" (pass request to another instance) etc
+				// those can be throttled to prevent servers from doing not so nice things...
+				var d = require("dnode")(this.create.bind(this, {})).connect(location);
+
+				d.on("local", function (connection)
+				{
+					d.on("remote", function ()
+					{
+						resolve(connection);
+					});
+				});
+			}.bind(this));
 		}
 	},
 
@@ -43,10 +54,20 @@ Ext.define("observ.util.Connection",
 			this.mixins.observable.constructor.call(this);
 
 			this.id = socket.remoteAddress + ":" + socket.remotePort;
-			this.addEvents("beforedestroy", "destroy");
+			this.addEvents("connect", "beforedestroy", "destroy");
 			this.initHandlers(dnode);
 
-			this.remote = remote;
+			this.remote = {};
+
+			Ext.iterate(remote, function (name, remoteCallback)
+			{
+				this.remote[name] = require("Q").Promise(function (resolve, reject, notify)
+				{
+					remoteCallback(resolve);
+				});
+			}, this);
+
+			this.fireEvent("connect", this);
 
 		}.bind(this));
 	},

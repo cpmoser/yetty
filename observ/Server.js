@@ -92,9 +92,6 @@
 
 	getInstance: function (connection, remoteCallback)
 	{
-		console.log("where is the connection?");
-		console.log(connection);
-
 		remoteCallback(this.instance.$className, this.instance.data, this.instance.getConnector(connection));
 	},
 

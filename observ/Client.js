@@ -26,7 +26,13 @@ Ext.define("observ.Client",
 	{
 		var promise = require("Q").Promise(function (resolve, reject, notify)
 		{
-			Ext.ClassManager.get("observ.util.Connection").connect(location); // .then -> resolve with the new connection or instance
+			Ext.ClassManager.get("observ.util.Connection").connect(location).then(function (connection)
+			{
+				return connection.remote.instance();
+			}).then(function (instance)
+			{
+				resolve(instance);
+			}); // .then -> resolve with the new connection or instance
 		});
 
 		return promise;
