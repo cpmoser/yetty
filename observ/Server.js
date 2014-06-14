@@ -13,7 +13,8 @@
 
 	requires:
 	[
-		"observ.util.Connection"
+		"observ.util.Connection",
+		"observ.util.WebConnection"
 	],
 
 	constructor: function (port, httpPort)
@@ -79,7 +80,6 @@
 
 			this.instance.set("objectCount", count);
 			this.instance.startup(Ext);
-//			this.instance.tick();
 
 			this.log("observ.Server Instance ready for namespace " + this.instance.get("ns"));
 
@@ -131,8 +131,8 @@
 		var sock = shoe(function (stream)
 		{
 			var
-				wc = Ext.bind(Ext.create, Ext, ["observ.util.Connection"], 0),
-				wd = dnode(wc);
+				wc = Ext.ClassManager.get("observ.util.WebConnection"),
+				wd = dnode(wc.create.bind(wc, protocol));
 
 			wd.on("error", function (error)
 			{

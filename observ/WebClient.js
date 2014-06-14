@@ -8,21 +8,19 @@ Ext.define("observ.WebClient",
 {
 	extend: "observ.Client",
 
-	connect: function ()
-	{
-		var
-			shoe   = require("shoe"),
-			stream = shoe("/observ-connect"),
-			dnode  = require("dnode"),
-			d      = dnode();
+	requires:
+	[
+		"observ.util.WebConnection"
+	],
 
-		d.on("remote", Ext.bind(this.onConnect, this, [stream], true));
-		d.pipe(stream).pipe(d);
-	},
-
-	onConnect: function (remote, dnode, stream)
+	connect: function (location)
 	{
-		dnode.stream = stream;
-		this.callParent([remote, dnode]);
+		return require("Q").Promise(function (resolve, reject, notify)
+		{
+			Ext.ClassManager.get("observ.util.WebConnection").connect(location).then(function (instance)
+			{
+				resolve(instance);
+			});
+		});
 	}
 });

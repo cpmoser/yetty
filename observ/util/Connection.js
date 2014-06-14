@@ -4,7 +4,7 @@
 
 Ext.define("observ.util.Connection",
 {
-	statics:
+	inheritableStatics:
 	{
 		connections: [],
 
@@ -60,7 +60,7 @@ Ext.define("observ.util.Connection",
 			// add in remote stuff here
 			console.log(remote);
 
-			// call this afterwards, otherwise it's sent back to the remote
+			// call these afterwards, otherwise it's sent back to the remote
 			this.mixins.observable.constructor.call(this);
 
 			this.id = socket.remoteAddress + ":" + socket.remotePort;

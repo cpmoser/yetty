@@ -124,8 +124,10 @@ Ext.define("observui.view.Viewport",
 		this.on("render", function ()
 		{
 			this.client = Ext.create("observ.WebClient");
-			this.client.on("instance", this.onInstance, this);
-			this.client.connect();
+			this.client.connect().then(this.onInstance.bind(this), function ()
+			{
+				//
+			});
 		}, this);
 	},
 

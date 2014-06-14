@@ -138,7 +138,7 @@ Ext.define("observ.data.sandbox.Sandbox", function ()
 
 			this.set("ticks", tick);
 
-			Ext.defer(this.tick, 1000, this);
+			Ext.defer(this.tick, 5000, this);
 		},
 
 		shutdown: function ()
