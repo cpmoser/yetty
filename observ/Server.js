@@ -92,7 +92,12 @@
 
 	getInstance: function (connection, remoteCallback)
 	{
-		remoteCallback(this.instance.$className, this.instance.data, this.instance.getConnector(connection));
+		remoteCallback(
+		{
+			"$className": this.instance.$className,
+			data:         this.instance.data,
+			connector:    this.instance.getConnector(connection)
+		});
 	},
 
 	listen: function (port, httpPort)

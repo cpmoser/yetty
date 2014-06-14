@@ -3,71 +3,32 @@
  */
 
 /*global require,EventEmitter,console*/
+
 Ext.define("observ.Client",
 {
 	extend: "Ext.data.Model",
 
 	requires:
 	[
-		"observ.util.Connection"
+		"observ.util.Connection",
+		"observ.util.persist.Null" // should be null persist eventually
 	],
 
 	constructor: function (config)
 	{
 		this.callParent(arguments);
 
-		Ext.ClassManager.setAlias("observ.util.persist.Persist", "observ.util.Persist");
-		Ext.require("observ.util.persist.Persist");
-
 		this.addEvents("connect", "instance");
 	},
 
 	connect: function (location)
 	{
-		var promise = require("Q").Promise(function (resolve, reject, notify)
+		return require("Q").Promise(function (resolve, reject, notify)
 		{
-			Ext.ClassManager.get("observ.util.Connection").connect(location).then(function (connection)
-			{
-				return connection.remote.instance();
-			}).then(function (instance)
+			Ext.ClassManager.get("observ.util.Connection").connect(location).then(function (instance)
 			{
 				resolve(instance);
-			}); // .then -> resolve with the new connection or instance
+			});
 		});
-
-		return promise;
-	},
-
-	connectOld: function (address)
-	{
-		var
-			dnode      = require('dnode'),
-			connection = dnode.connect(5050, Ext.bind(this.onConnect, this));
-	},
-
-	onConnect: function (remote, dnode)
-	{
-		var connection = Ext.create("observ.util.Connection", this, remote, dnode);
-
-		this.connection = connection;
-
-		remote.instance(Ext.bind(this.onInstance, this));
-
-		return;
-	},
-
-	onInstance: function ($className, data, theirRemoter)
-	{
-		try
-		{
-			this.instance = Ext.create($className, data);
-			this.instance.connect(this.connection, theirRemoter, theirRemoter.connect);
-		}
-		catch (e)
-		{
-			console.log("error", e.stack);
-		}
-
-		this.fireEvent("instance", this.instance);
 	}
 });

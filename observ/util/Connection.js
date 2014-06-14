@@ -6,23 +6,33 @@ Ext.define("observ.util.Connection",
 {
 	statics:
 	{
-		connect: function (location)
+		connections: [],
+
+		connect: function (location, protocol)
 		{
+			var me = this;
+
 			return require("Q").Promise(function (resolve, reject, notify)
 			{
 				// protocol is the second argument
 				// for clients, this may include things like "requestAuthorization", "ping", "handoff" (pass request to another instance) etc
 				// those can be throttled to prevent servers from doing not so nice things...
-				var d = require("dnode")(this.create.bind(this, {})).connect(location);
+				var d = require("dnode")(me.create.bind(me, {})).connect(location);
 
 				d.on("local", function (connection)
 				{
 					d.on("remote", function ()
 					{
-						resolve(connection);
+						me.connections.push(me);
+
+						connection.remote.instance().then(function (spec)
+						{
+							connection.instance = connection.instantiate(spec.$className, spec.data, spec.connector);
+							resolve(connection.instance);
+						});
 					});
 				});
-			}.bind(this));
+			});
 		}
 	},
 
@@ -61,10 +71,13 @@ Ext.define("observ.util.Connection",
 
 			Ext.iterate(remote, function (name, remoteCallback)
 			{
-				this.remote[name] = require("Q").Promise(function (resolve, reject, notify)
+				this.remote[name] = function ()
 				{
-					remoteCallback(resolve);
-				});
+					return require("Q").Promise(function (resolve, reject, notify)
+					{
+						remoteCallback(resolve);
+					});
+				};
 			}, this);
 
 			this.fireEvent("connect", this);
@@ -85,5 +98,20 @@ Ext.define("observ.util.Connection",
 	{
 		this.fireEvent("destroy", this);
 		this.callParent(arguments);
+	},
+
+	instance: null,
+
+	/**
+	 * Instantiate a remote object
+	 */
+	instantiate: function ($className, data, theirRemoter)
+	{
+		var object;
+
+		object = Ext.create($className, data);
+		object.connect(this, theirRemoter, theirRemoter.connect);
+
+		return object;
 	}
 });
