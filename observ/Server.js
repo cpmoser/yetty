@@ -59,7 +59,7 @@
 	{
 		this.log("observ.Server Persistence connected");
 
-		this.instance = Ext.create("observ.data.sandbox.Sandbox",
+		this.instance = Ext.create("observ.data.instance.Instance",
 		{
 			name:        "www.observjs.com",
 			description: "ObservJS Master Instance",

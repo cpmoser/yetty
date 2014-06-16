@@ -1,14 +1,14 @@
 var extjs = require("./extjs-vm");
 
-var cb = function ()
+var local = extjs.create("observ.data.instance.LocalDelegate",
 {
-	console.log("helloworld");
-};
+	name: "stocks.observjs.com",
+	description: "ObservJS Stock Database",
+	ns:          "observ-stock",
+	location:    "https://www.observjs.com",
+	foo:         "stock",
+	cacheCount:  0,
+	objectCount: 0
+});
 
-var instance = {
-	name: "ObservJS Stocks",
-	ns:   "stock",
-	location: "/stock"
-};
-
-var child = require("child_process").fork("./instance", [], {env: {instance: instance}});
+local.startup();

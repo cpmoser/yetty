@@ -2,7 +2,6 @@
  * copyright (c) 2014 Chris Moser (cpmoser@network54.com)
  */
 
-
 Ext.define("observ.data.instance.Instance", function ()
 {
 	var objects = {}, counter = 1;
@@ -353,6 +352,19 @@ Ext.define("observ.data.instance.Instance", function ()
 			});
 
 			return o;
+		},
+
+		/**
+		 * Function to handle a socket passed over directly by a client or by a handoff from a master instance to a local one
+		 */
+		handleSocket: function (socket)
+		{
+
+		},
+
+		handleWebSocket: function (server)
+		{
+
 		}
 	};
 });
