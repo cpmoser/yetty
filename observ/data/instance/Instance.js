@@ -353,7 +353,7 @@ Ext.define("observ.data.instance.Instance", function ()
 					{
 						remoteCallback(
 						{
-							"$className": this.$className,
+							"$className": "observ.data.instance.Instance", //this.$className,
 							data:         this.data,
 							connector:    this.getConnector(connection)
 						});

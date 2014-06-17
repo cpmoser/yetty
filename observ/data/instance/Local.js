@@ -1,5 +1,10 @@
 Ext.define("observ.data.instance.Local",
 {
+	requires:
+	[
+		"observ.util.Connection"
+	],
+
 	extend: "observ.data.instance.Instance",
 
 	constructor: function (config)
@@ -8,6 +13,12 @@ Ext.define("observ.data.instance.Local",
 
 		Ext.process.on("message", this.onMessage.bind(this));
 		Ext.process.send("ready");
+
+		var net = require("net");
+
+		this.server = net.createServer(this.rpc.bind(this));
+
+		this.server.listen("/tmp/localinstance");
 	},
 
 	onMessage: function (message, handle)

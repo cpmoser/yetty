@@ -17,22 +17,15 @@ Ext.define("observ.data.instance.LocalDelegate",
 		// child message handler
 	},
 
-	pass: function (stream)
-	{
-		console.log(stream.constructor.name);
-
-		this.child.send("stream", stream);
-	},
-
 	rpc: function (stream)
 	{
 		var net = require("net");
 
-		// create another stream to the forked process
-		var passthrough = new net.Socket();
+		var passthru = net.connect("/tmp/localinstance");
 
-		this.pass(passthrough);
-
-		passthrough.pipe(stream).pipe(passthrough);
+		passthru.on("connect", function ()
+		{
+			stream.pipe(passthru).pipe(stream);
+		});
 	}
 });
