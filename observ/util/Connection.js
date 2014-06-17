@@ -57,13 +57,14 @@ Ext.define("observ.util.Connection",
 
 		dnode.on("remote", function (remote)
 		{
-			// add in remote stuff here
-			console.log(remote);
-
 			// call these afterwards, otherwise it's sent back to the remote
 			this.mixins.observable.constructor.call(this);
 
-			this.id = socket.remoteAddress + ":" + socket.remotePort;
+			// this.id = socket.remoteAddress + ":" + socket.remotePort;
+
+			// temporary
+			this.id = Math.random().toString(36).substring(7);
+
 			this.addEvents("connect", "beforedestroy", "destroy");
 			this.initHandlers(dnode);
 

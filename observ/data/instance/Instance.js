@@ -89,11 +89,6 @@ Ext.define("observ.data.instance.Instance", function ()
 			}
 		],
 
-		add: function (obj)
-		{
-			objects[counter++] = obj;
-		},
-
 		startup: function (vm)
 		{
 			if (vm === undefined)
@@ -138,11 +133,6 @@ Ext.define("observ.data.instance.Instance", function ()
 			this.set("ticks", tick);
 
 			Ext.defer(this.tick, 5000, this);
-		},
-
-		shutdown: function ()
-		{
-
 		},
 
 		constructor: function (data)
@@ -354,17 +344,27 @@ Ext.define("observ.data.instance.Instance", function ()
 			return o;
 		},
 
-		/**
-		 * Function to handle a socket passed over directly by a client or by a handoff from a master instance to a local one
-		 */
-		handleSocket: function (socket)
+		rpc: function (stream)
 		{
+			var
+				protocol =
+				{
+					instance: function (connection, remoteCallback)
+					{
+						remoteCallback(
+						{
+							"$className": this.$className,
+							data:         this.data,
+							connector:    this.getConnector(connection)
+						});
+					}.bind(this)
+				},
 
-		},
+				dnode = require("dnode"),
+				c     = Ext.ClassManager.get("observ.util.Connection"),
+				d     = dnode(c.create.bind(c, protocol));
 
-		handleWebSocket: function (server)
-		{
-
+			d.pipe(stream).pipe(d);
 		}
 	};
 });

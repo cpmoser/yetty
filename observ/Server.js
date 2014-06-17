@@ -109,56 +109,56 @@
 				instance: this.getInstance.bind(this)
 			},
 
+			i = this.instance,
+
 			dnode = require("dnode"),
 
 			c = Ext.ClassManager.get("observ.util.Connection"),
-			i = this.instance,
 			d = dnode(c.create.bind(c, protocol)),
 
 			server;
 
-		server = d.listen(port);
+		server = require("net").createServer(i.rpc.bind(i));
+
+		server.listen(port);
 
 		var
 			ec   = require('ecstatic')({root: ".", autoIndex: true, baseDir: "/"}),
-			http = require('http'),
-			shoe = require('shoe');
+			shoe = require('shoe'),
+			http = require("http").createServer(ec);
 
-		var httpServer = http.createServer(ec);
+		http.listen(httpPort);
 
-		httpServer.listen(httpPort);
+		var sock = shoe(i.rpc.bind(i));
 
-		var sock = shoe(function (stream)
-		{
-			var
-				wc = Ext.ClassManager.get("observ.util.WebConnection"),
-				wd = dnode(wc.create.bind(wc, protocol));
-
-			wd.on("error", function (error)
-			{
-				this.log("observ.Server Dnode client error (" + error + ")");
-			}.bind(this));
-
-			wd.on("fail", function (error)
-			{
-				this.log("observ.Server Dnode client failure (" + error + ")");
-			}.bind(this));
-
-			wd.stream = stream;
-
-			wd.pipe(stream).pipe(wd);
-		});
-
-		sock.install(httpServer, "/observ-connect");
-
-		sock.on("connection", function (conn)
-		{
-			console.log("conn received");
-			console.log(conn);
-		});
+		sock.install(http, "/observ-connect");
 
 		this.log("observ.Server Listening for client connections on " + port + ", http connections on " + httpPort);
 
+		var localInstance = Ext.create("observ.data.instance.LocalDelegate",
+		{
+			name:        "stocks.observjs.com",
+			description: "ObservJS Stock Database",
+			ns:          "observ-stock",
+			location:    "https://www.observjs.com",
+			foo:         "stock",
+			cacheCount:  0,
+			objectCount: 0
+		});
+
+		localInstance.on("ready", this.onLocalReady.bind(this));
+
+		localInstance.startup();
+
+		this.http = http;
+
 		return this;
+	},
+
+	onLocalReady: function (instance)
+	{
+		var sock = require("shoe")(instance.rpc.bind(instance));
+
+		sock.install(this.http, "/local");
 	}
 });

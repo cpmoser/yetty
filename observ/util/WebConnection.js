@@ -14,7 +14,7 @@ Ext.define("observ.util.WebConnection",
 				// for clients, this may include things like "requestAuthorization", "ping", "handoff" (pass request to another instance) etc
 				// those can be throttled to prevent servers from doing not so nice things...
 				var
-					s = require("shoe")("/observ-connect"),
+					s = require("shoe")("/local"),
 					d = require("dnode")(me.create.bind(me, {}));
 
 				d.stream = s;
