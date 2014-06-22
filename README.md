@@ -1,7 +1,7 @@
-observjs
+Yetty
 ========
 
-extjs models in the cloud
+(previously ObservJS) - ExtJS models in the cloud.
 
 
 note: to build the bundle, browserify -r Q -r shoe -r dnode -o bundle.js
